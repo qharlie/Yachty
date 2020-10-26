@@ -4,47 +4,81 @@
 #include "resource.h"
 #include <iostream>
 #include <fstream>
+#include <queue>
+#include <deque>
+#include <synchapi.h>
+#include <WinUser.h>
 using namespace std;
+const UINT JC_MAX_CLIPBOARD_BUFFER_SIZE = 524288;
+char JC_LOG_FILE[65535];
+const char* JS_WHITESPACE = " \t\n\r\f\v";
+const UINT JC_MAX_RETRY_COUNT = 5;
+std::string JC_LAST_CLIPBOARD_ENTRY;
+std::vector<std::string> JC_CLIPBOARD_HISTORY(50);
 
-void ErrorExit(LPTSTR lpszFunction)
+// trim from end of string (right)
+inline std::string& rtrim(std::string& s, const char* t = JS_WHITESPACE)
 {
-	// Retrieve the system error message for the last-error code
-
-	LPVOID lpMsgBuf;
-	LPVOID lpDisplayBuf;
-	DWORD dw = GetLastError();
-
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM |
-		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
-		dw,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR)&lpMsgBuf,
-		0, NULL);
-
-	// Display the error message and exit the process
-
-	lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT,
-		(lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR)lpszFunction) + 40) * sizeof(TCHAR));
-	StringCchPrintf((LPTSTR)lpDisplayBuf,
-		LocalSize(lpDisplayBuf) / sizeof(TCHAR),
-		TEXT("%s failed with error %d: %s"),
-		lpszFunction, dw, lpMsgBuf);
-	MessageBox(NULL, (LPCTSTR)lpDisplayBuf, TEXT("Error"), MB_OK);
-
-	LocalFree(lpMsgBuf);
-	LocalFree(lpDisplayBuf);
-	ExitProcess(dw);
+	s.erase(s.find_last_not_of(t) + 1);
+	return s;
 }
 
-wchar_t* convertCharArrayToLPCWSTR(const char* charArray)
+// trim from beginning of string (left)
+inline std::string& ltrim(std::string& s, const char* t = JS_WHITESPACE)
+{
+	s.erase(0, s.find_first_not_of(t));
+	return s;
+}
+
+// trim from both ends of string (right then left)
+inline std::string& trim(std::string& s, const char* t = JS_WHITESPACE)
+{
+	return ltrim(rtrim(s, t), t);
+}
+
+wchar_t* jc_charToCWSTR(const char* charArray)
 {
 	wchar_t* wString = new wchar_t[4096];
 	MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, 4096);
 	return wString;
 }
+
+
+template <typename T, int MaxLen, typename Container = std::deque<T>>
+class FixedQueue : public std::queue<T, Container> {
+public:
+	void push(const T& value) {
+		if (this->size() == MaxLen) {
+			this->c.pop_front();
+		}
+		std::queue<T, Container>::push(value);
+	}
+};
+
+
+void jc_alert(std::string item)
+{
+
+	MessageBox(NULL, jc_charToCWSTR(item.c_str()), _T("Test 2"), MB_OK);
+}
+void jc_set_clipboard(std::string item)
+{
+	
+	if (OpenClipboard(NULL))
+	{
+		HGLOBAL clipbuffer;
+		char* buffer;
+		EmptyClipboard();
+		clipbuffer = GlobalAlloc(GMEM_DDESHARE, item.length() + 1);
+		buffer = (char*)GlobalLock(clipbuffer);
+		strcpy(buffer, item.c_str());
+		GlobalUnlock(clipbuffer);
+		SetClipboardData(CF_TEXT, clipbuffer);
+		CloseClipboard();
+	}
+	else jc_error_and_exit(TEXT("SET_CLIPBOARD"));
+}
+
 
 void jc_appendToFile(char* fileName, char* message)
 {
@@ -53,58 +87,43 @@ void jc_appendToFile(char* fileName, char* message)
 	myfile << message << "\n";
 	myfile.close();
 
-
 }
-void jc_writeFile(LPCWSTR file_name, char* DataBuffer)
+
+void jc_appendToLog(char* msg)
 {
-	HANDLE hFile;
-	DWORD dwBytesToWrite = (DWORD)strlen(DataBuffer);
-	DWORD dwBytesWritten = 0;
-	BOOL bErrorFlag = FALSE;
+	jc_appendToFile(JC_LOG_FILE, msg);
+}
 
-
-	hFile = CreateFile(file_name,                // name of the write
-		GENERIC_WRITE,          // open for writing
-		0,                      // do not share
-		NULL,                   // default security
-		CREATE_NEW,             // create new file only
-		FILE_ATTRIBUTE_NORMAL,  // normal file
-		NULL);                  // no attr. template
-
-	if (hFile == INVALID_HANDLE_VALUE)
+std::string jc_get_clipboard(HWND hWnd)
+{
+	BOOL success = false;
+	int i = 0;
+	success = OpenClipboard(hWnd);
+	while (!success)
 	{
-		_tprintf(TEXT("Terminal failure: Unable to open file \"%s\" for write.\n"), DataBuffer);
-		return;
-	}
-
-	_tprintf(TEXT("Writing %d bytes to %s.\n"), dwBytesToWrite, DataBuffer);
-
-	bErrorFlag = WriteFile(
-		hFile,           // open file handle
-		DataBuffer,      // start of data to write
-		dwBytesToWrite,  // number of bytes to write
-		&dwBytesWritten, // number of bytes that were written
-		NULL);            // no overlapped structure
-
-	if (FALSE == bErrorFlag)
-	{
-		_tprintf(TEXT("Terminal failure: Unable to write to file.\n"));
-	}
-	else
-	{
-		if (dwBytesWritten != dwBytesToWrite)
+		i += 1;
+		if (i >= JC_MAX_RETRY_COUNT)
 		{
-			// This is an error because a synchronous write that results in
-			// success (WriteFile returns TRUE) should write all data as
-			// requested. This would not necessarily be the case for
-			// asynchronous writes.
-			_tprintf(TEXT("Error: dwBytesWritten != dwBytesToWrite\n"));
+			jc_error_and_exit(jc_charToCWSTR("CLIPBOARD_READ_FAILED, now bailing out."));
+			break;
 		}
-		else
-		{
-			_tprintf(TEXT("Wrote %d bytes to %s successfully.\n"), dwBytesWritten, DataBuffer);
+		else {
+			Sleep(250);
 		}
+		success = OpenClipboard(hWnd);
 	}
 
-	CloseHandle(hFile);
+	if (success) {
+		//{
+		HANDLE hClipboardData = GetClipboardData(CF_TEXT);
+		char* pchData = (char*)GlobalLock(hClipboardData);
+		CloseClipboard();
+		GlobalUnlock(hClipboardData);
+		return std::string(pchData);
+	}
+	else {
+		jc_error_and_exit(TEXT("ERROR ACCESS DENIED TO OPENCLIPBOARD"));
+		return std::string("");
+	}
+
 }

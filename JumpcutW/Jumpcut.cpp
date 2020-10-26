@@ -1,10 +1,8 @@
-// SysTrayDemo.cpp : Defines the entry point for the application.
-//
 
 #include "stdafx.h"
 #include "Jumpcut.h"
 #include <stdio.h>
-#include <WinUser.h>
+
 #define MAX_LOADSTRING 100
 #define	WM_USER_SHELLICON WM_USER + 1
 
@@ -23,6 +21,12 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 HWND hwndNextViewer;
+
+char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
+
+//FixedQueue<std::string, 50> JC_CLIPBOARD_HISTORY;
+
+
 int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -30,12 +34,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
-	// TODO: Place code here.
+	sprintf(JC_LOG_FILE, "%s\\jc_search_history.txt", JC_USERS_HOME_DIRECTORY);
 	MSG msg;
 	HACCEL hAccelTable;
 
-	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_SYSTRAYDEMO, szWindowClass, MAX_LOADSTRING);
 
@@ -62,21 +64,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int)msg.wParam;
 }
 
-
-
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
-//  COMMENTS:
-//
-//    This function and its usage are only necessary if you want this code
-//    to be compatible with Win32 systems prior to the 'RegisterClassEx'
-//    function that was added to Windows 95. It is important to call this function
-//    so that the application will get 'well formed' small icons associated
-//    with it.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
@@ -98,16 +85,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	return RegisterClassEx(&wcex);
 }
 
-//
-//   FUNCTION: InitInstance(HINSTANCE, int)
-//
-//   PURPOSE: Saves instance handle and creates main window
-//
-//   COMMENTS:
-//
-//        In this function, we save the instance handle in a global variable and
-//        create and display the main program window.
-//
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	HWND hWnd;
@@ -136,36 +113,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	return TRUE;
 }
-int DisplayConfirmSaveAsMessageBox(char* str)
-{
-	int msgboxID = MessageBox(
-		NULL,
-		convertCharArrayToLPCWSTR(str),
-		L"Text",
-		MB_ICONEXCLAMATION | MB_YESNO
-	);
-
-	if (msgboxID == IDYES)
-	{
-		// TODO: add code
-	}
-
-	return msgboxID;
-}
-void Init()
-{
-	// user defined message that will be sent as the notification message to the Window Procedure 
-}
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE:  Processes messages for the main window.
-//
-//  WM_COMMAND	- process the application menu
-//  WM_PAINT	- Paint the main window
-//  WM_DESTROY	- post a quit message and return
-//
-//
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -176,22 +123,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 
-	case WM_CLIPBOARDUPDATE:
-		if (OpenClipboard(NULL)) {
-			//{
-			HANDLE hClipboardData = GetClipboardData(CF_TEXT);
-			char* pchData = (char*)GlobalLock(hClipboardData);
-			//DisplayConfirmSaveAsMessageBox(convertCharArrayToLPCWSTR(pchData));
-			GlobalUnlock(hClipboardData);
-			jc_appendToFile("C:\\Users\\q\\jc_log.txt", pchData);
-			CloseClipboard();
-			//}
+	case WM_CLIPBOARDUPDATE: {
+		std::string clip = jc_get_clipboard(hWnd);
+		if (!clip.empty())
+		{
+			if (clip != JC_LAST_CLIPBOARD_ENTRY)
+			{
+				JC_CLIPBOARD_HISTORY.push_back(clip);
+				JC_LAST_CLIPBOARD_ENTRY = clip;
+			}
+			else jc_appendToLog("Skipping Duplicate");
 		}
 		else {
-			jc_appendToFile("C:\\Users\\q\\jc_log.txt", "ERROR ACCESS DENIED TO OPENCLIPBOARD");
-
+			jc_error_and_exit(TEXT("ERROR ACCESS DENIED TO OPENCLIPBOARD"));
 		}
 		break;
+	}
 	case WM_CHANGECBCHAIN:
 
 		// If the next window is closing, repair the chain. 
@@ -217,28 +164,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// systray msg callback 
 		switch (LOWORD(lParam))
 		{
+		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 			UINT uFlag = MF_BYPOSITION | MF_STRING;
 			GetCursorPos(&lpClickPoint);
 			hPopMenu = CreatePopupMenu();
-			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About"));
-			if (bDisable == TRUE)
+			int BASE = 2000;
+			for (int i = 0; i < JC_CLIPBOARD_HISTORY.size(); i++)
 			{
-				uFlag |= MF_GRAYED;
-			}
-			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, IDM_TEST2, _T("Test 2")); // Test 2
-			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, IDM_TEST1, _T("Test 1")); // Test 1				
-			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
-			if (bDisable == TRUE)
-			{
-				InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ENABLE, _T("Enable"));
-			}
-			else
-			{
-				InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_DISABLE, _T("Disable"));
+				std::string item = JC_CLIPBOARD_HISTORY[i];
+				if (!item.empty())
+					InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, i + BASE, jc_charToCWSTR(trim(item).c_str()));
 			}
 			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
-			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit"));
+			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
+			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
 
 			SetForegroundWindow(hWnd);
 			TrackPopupMenu(hPopMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_BOTTOMALIGN, lpClickPoint.x, lpClickPoint.y, 0, hWnd, NULL);
@@ -250,16 +190,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		wmId = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
 		// Parse the menu selections:
+
 		switch (wmId)
 		{
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
-		case IDM_TEST1:
-			MessageBox(NULL, _T("This is a test for menu Test 1"), _T("Test 1"), MB_OK);
-			break;
-		case IDM_TEST2:
-			MessageBox(NULL, _T("This is a test for menu Test 2"), _T("Test 2"), MB_OK);
 			break;
 		case IDM_DISABLE:
 			bDisable = TRUE;
@@ -271,8 +206,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Shell_NotifyIcon(NIM_DELETE, &nidApp);
 			DestroyWindow(hWnd);
 			break;
-		default:
+		default: {
+
+			char msg[100];
+			int BASE = 2000;
+			int idx = wmId - BASE;
+			std::string item = JC_CLIPBOARD_HISTORY[idx];
+			jc_set_clipboard(item);
 			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
 		}
 		break;
 		/*
