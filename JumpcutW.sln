@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JumpcutW", "JumpcutW\JumpcutW.vcxproj", "{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JumpcutForWindows", "JumpcutW\JumpcutW.vcxproj", "{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "JumpcutWInstaller", "JumpcutWInstaller\JumpcutWInstaller.vdproj", "{758CA2E4-E5EF-4E0A-B0F6-06F359653B5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,11 +17,17 @@ Global
 		{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}.Debug|Win32.Build.0 = Debug|Win32
 		{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}.Release|Win32.ActiveCfg = Release|Win32
 		{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}.Release|Win32.Build.0 = Release|Win32
+		{758CA2E4-E5EF-4E0A-B0F6-06F359653B5A}.Debug|Win32.ActiveCfg = Debug
+		{758CA2E4-E5EF-4E0A-B0F6-06F359653B5A}.Release|Win32.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B9289799-0DDF-49AD-B8A1-9C0E00DD0F46}
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
 EndGlobal

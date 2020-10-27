@@ -15,13 +15,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Hebrew resources
+// Hebrew (Israel) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HEB)
-#ifdef _WIN32
 LANGUAGE LANG_HEBREW, SUBLANG_DEFAULT
 #pragma code_page(1255)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -30,27 +28,22 @@ LANGUAGE LANG_HEBREW, SUBLANG_DEFAULT
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_SYSTRAYDEMO         ICON                    "SysTrayDemo.ico"
+IDI_JUMPCUT             ICON                    "Jumpcut.ico"
+
 IDI_SMALL               ICON                    "small.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDC_SYSTRAYDEMO MENU 
+IDC_JUMPCUT MENU
 BEGIN
-    POPUP "SysTrayMenu"
+    POPUP "Jumpcut"
     BEGIN
         MENUITEM "&About ...",                  IDM_ABOUT
-        MENUITEM "Test 1",                      IDM_TEST1
-        MENUITEM "Test 2",                      IDM_TEST2
-        MENUITEM SEPARATOR
-        MENUITEM "Enable",                      IDM_ENABLE
-        MENUITEM "Disable",                     IDM_DISABLE
-        MENUITEM SEPARATOR
         MENUITEM "E&xit",                       IDM_EXIT
-        MENUITEM "SEP",                         IDM_SEP
     END
 END
 
@@ -60,7 +53,7 @@ END
 // Accelerator
 //
 
-IDC_SYSTRAYDEMO ACCELERATORS 
+IDC_JUMPCUT ACCELERATORS
 BEGIN
     "?",            IDM_ABOUT,              ASCII,  ALT
     "/",            IDM_ABOUT,              ASCII,  ALT
@@ -72,16 +65,16 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 22, 17, 230, 75
+IDD_ABOUTBOX DIALOGEX 22, 17, 202, 71
 STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
-CAPTION "About"
-FONT 8, "System", 0, 0, 0x0
+CAPTION "Jumpcut For Windows"
+FONT 12, "Verdana", 400, 0, 0x0
 BEGIN
-    ICON            IDI_SYSTRAYDEMO,IDC_MYICON,14,9,20,20
-    LTEXT           "SysTrayDemo Version 1.0",IDC_STATIC,49,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2007",IDC_STATIC,49,20,119,8
-    DEFPUSHBUTTON   "OK",IDOK,195,6,30,11,WS_GROUP
-    LTEXT           "Demo Developed By Mark Zitnik",IDC_STATIC,49,31,108,8
+    ICON            IDI_JUMPCUT,IDC_MYICON,10,28,10,10
+    LTEXT           "Jumpcut for Windows , Version 0.1",IDC_STATIC,29,11,119,8,SS_NOPREFIX
+    DEFPUSHBUTTON   "OK",IDOK,168,31,30,11,WS_GROUP
+    LTEXT           "This is a windows rewrite of Jumpcut for MacOS https://snark.github.io/jumpcut/",IDC_STATIC,29,22,133,18,SS_NOPREFIX
+    LTEXT           "Jumpcut for Windows is licensed uner the MIT License.",IDC_STATIC,29,43,131,18,SS_NOPREFIX
 END
 
 
@@ -115,17 +108,33 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 70
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_APP_TITLE           "SysTrayDemo"
+    IDS_APP_TITLE           "JUMPCUT"
     IDS_APPTOOLTIP          "SysTray Demo"
-    IDC_SYSTRAYDEMO         "SYSTRAYDEMO"
+    IDC_JUMPCUT             "JUMPCUT"
 END
 
-#endif    // Hebrew resources
+#endif    // Hebrew (Israel) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

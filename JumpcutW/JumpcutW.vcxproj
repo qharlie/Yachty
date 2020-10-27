@@ -98,10 +98,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico" />
-    <Image Include="SysTrayDemo.ico" />
+    <Image Include="Jumpcut.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SysTrayDemo.rc" />
+    <ResourceCompile Include="Jumpcut.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

@@ -1,17 +1,17 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by SysTrayDemo.rc
+// Used by JUMPCUT.rc
 //
 #define IDC_MYICON                      2
-#define IDD_SYSTRAYDEMO_DIALOG          102
+#define IDD_JUMPCUT_DIALOG          102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
 #define IDS_APPTOOLTIP                  104
 #define IDM_EXIT                        105
-#define IDI_SYSTRAYDEMO                 107
+#define IDI_JUMPCUT                 107
 #define IDI_SMALL                       108
-#define IDC_SYSTRAYDEMO                 109
+#define IDC_JUMPCUT                 109
 #define IDR_MAINFRAME                   128
 #define ID_S_                           32771
 #define ID_S_EXIT                       32772
