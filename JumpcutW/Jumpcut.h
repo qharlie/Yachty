@@ -9,13 +9,20 @@
 #include <synchapi.h>
 #include <WinUser.h>
 using namespace std;
-const UINT JC_MAX_CLIPBOARD_BUFFER_SIZE = 524288;
+
+// The name of our log file
 char JC_LOG_FILE[65535];
+char JC_HISTORY_FILE[65535];
+
 const char* JS_WHITESPACE = " \t\n\r\f\v";
 const UINT JC_MAX_RETRY_COUNT = 5;
+const UINT JC_MAX_HISTORY_SIZE = 50;
+const char* JC_APPLICATION_NAME = "JumpcutW_v0.1";
 std::string JC_LAST_CLIPBOARD_ENTRY;
-std::vector<std::string> JC_CLIPBOARD_HISTORY(50);
+std::deque<std::string> JC_CLIPBOARD_HISTORY;
 
+VOID CALLBACK jc_show_menu_at_current_point(HWND hwnd, UINT message, UINT idTimer, DWORD dwTime);
+// Bail out with an error mesage 
 void jc_error_and_exit(LPTSTR lpszFunction)
 {
 	DWORD dw = GetLastError();
@@ -72,6 +79,7 @@ inline std::string& trim(std::string& s, const char* t = JS_WHITESPACE)
 	return ltrim(rtrim(s, t), t);
 }
 
+// Convert to wide char 
 wchar_t* jc_charToCWSTR(const char* charArray)
 {
 	wchar_t* wString = new wchar_t[4096];
@@ -86,11 +94,16 @@ void moveItemToBack(std::vector<T>& v, size_t itemIndex)
 	std::rotate(it, it + 1, v.end());
 }
 
+template <typename T>
+void moveItemToBack(std::deque<T>& v, size_t itemIndex)
+{
+	auto it = v.begin() + itemIndex;
+	std::rotate(it, it + 1, v.end());
+}
 template < typename T>
-std::pair<bool, int > findInVector(const std::vector<T>& vecOfElements, const T& element)
+std::pair<bool, int > findInCollection(const std::vector<T>& vecOfElements, const T& element)
 {
 	std::pair<bool, int > result;
-	// Find given element in vector
 	auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
 	if (it != vecOfElements.end())
 	{
@@ -105,18 +118,47 @@ std::pair<bool, int > findInVector(const std::vector<T>& vecOfElements, const T&
 	return result;
 }
 
+template < typename T>
+std::pair<bool, int > findInCollection(const std::deque<T>& vecOfElements, const T& element)
+{
+	std::pair<bool, int > result;
+	auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
+	if (it != vecOfElements.end())
+	{
+		result.second = distance(vecOfElements.begin(), it);
+		result.first = true;
+	}
+	else
+	{
+		result.first = false;
+		result.second = -1;
+	}
+	return result;
+}
 template <typename T, int MaxLen, typename Container = std::deque<T>>
-class FixedQueue : public std::queue<T, Container> {
+class FixedQueue : public std::deque<T, Container> {
 public:
 	void push(const T& value) {
 		if (this->size() == MaxLen) {
 			this->c.pop_front();
 		}
-		std::queue<T, Container>::push(value);
+		this->push_back(value);
 	}
 };
 
-BOOL jc_wait_on_clipboard(HWND hWnd)
+
+template <typename T, int MaxLen, typename Container = std::vector<T>>
+class FixedVector : public std::vector<T, Container> {
+public:
+	void push(const T& value) {
+		if (this->size() == MaxLen) {
+			this->c.pop_front();
+		}
+		std::vector<T, Container>::push(value);
+	}
+};
+
+BOOL jc_wait_on_clipboard(HWND hWnd, int maxRetryCount = JC_MAX_RETRY_COUNT)
 {
 	BOOL success = false;
 	int i = 0;
@@ -124,7 +166,7 @@ BOOL jc_wait_on_clipboard(HWND hWnd)
 	while (!success)
 	{
 		i += 1;
-		if (i >= JC_MAX_RETRY_COUNT)
+		if (i >= maxRetryCount)
 		{
 			jc_error_and_exit(jc_charToCWSTR("CLIPBOARD_READ_FAILED, now bailing out."));
 			break;
@@ -159,7 +201,7 @@ void jc_set_clipboard(std::string item, HWND hWnd)
 	}
 	else jc_error_and_exit(TEXT("SET_CLIPBOARD"));
 }
-void jc_appendToFile(char* fileName, char* message)
+void jc_appendToFile(const char* fileName, const char* message)
 {
 	ofstream myfile;
 	myfile.open(fileName, std::ios_base::app);
@@ -168,9 +210,15 @@ void jc_appendToFile(char* fileName, char* message)
 
 }
 
-void jc_appendToLog(char* msg)
+void jc_log(const char* msg)
 {
 	jc_appendToFile(JC_LOG_FILE, msg);
+}
+
+
+void jc_appendToHistory(const char* msg)
+{
+	jc_appendToFile(JC_HISTORY_FILE, msg);
 }
 
 std::string jc_get_clipboard(HWND hWnd)

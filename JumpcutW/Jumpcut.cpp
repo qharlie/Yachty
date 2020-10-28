@@ -19,14 +19,15 @@ BOOL bDisable = FALSE;							// keep application state
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+void jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 HWND hwndNextViewer;
+HWND globalHWND;
 
 char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
 int JC_MAX_MENU_LABEL_LENGTH = 65;
-//FixedQueue<std::string, 50> JC_CLIPBOARD_HISTORY;
 
-
+// main entry point 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -34,7 +35,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-	sprintf(JC_LOG_FILE, "%s\\jc_search_history.txt", JC_USERS_HOME_DIRECTORY);
+	sprintf(JC_LOG_FILE, "%s\\.jc_log.txt", JC_USERS_HOME_DIRECTORY);
+	sprintf(JC_HISTORY_FILE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
+
+	// #Ensure only one version of the app 
+	HANDLE hMutex = OpenMutex(
+		MUTEX_ALL_ACCESS, 0, jc_charToCWSTR(JC_APPLICATION_NAME));
+
+	if (!hMutex)
+		hMutex =
+		CreateMutex(0, 0, jc_charToCWSTR(JC_APPLICATION_NAME));
+	else
+		return 0;
+
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -42,6 +55,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadString(hInstance, IDC_JUMPCUT, szWindowClass, MAX_LOADSTRING);
 
 	MyRegisterClass(hInstance);
+	//UINT_PTR timerid = SetTimer(NULL, 0, 5000, (TIMERPROC)jc_show_menu_at_current_point);
 
 	// Perform application initialization:
 	if (!InitInstance(hInstance, nCmdShow))
@@ -87,23 +101,22 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-	HWND hWnd;
 	HICON hMainIcon;
 
 	hInst = hInstance; // Store instance handle in our global variable
 
-	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+	globalHWND = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-	if (!hWnd)
+	if (!globalHWND)
 	{
 		return FALSE;
 	}
-	AddClipboardFormatListener(hWnd);
+	AddClipboardFormatListener(globalHWND);
 	hMainIcon = LoadIcon(hInstance, (LPCTSTR)MAKEINTRESOURCE(IDI_JUMPCUT));
 
 	nidApp.cbSize = sizeof(NOTIFYICONDATA); // sizeof the struct in bytes 
-	nidApp.hWnd = (HWND)hWnd;              //handle of the window which will process this app. messages 
+	nidApp.hWnd = (HWND)globalHWND;              //handle of the window which will process this app. messages 
 	nidApp.uID = IDI_JUMPCUT;           //ID of the icon that willl appear in the system tray 
 	nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP; //ORing of all the flags 
 	nidApp.hIcon = hMainIcon; // handle of the Icon to be displayed, obtained from LoadIcon 
@@ -129,33 +142,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			if (clip != JC_LAST_CLIPBOARD_ENTRY)
 			{
-				std::pair<bool, int> result = findInVector(JC_CLIPBOARD_HISTORY, clip);
+				std::pair<bool, int> result = findInCollection(JC_CLIPBOARD_HISTORY, clip);
 				if (result.first) {
 					moveItemToBack(JC_CLIPBOARD_HISTORY, result.second);
 				}
 				else {
+					jc_appendToHistory(clip.c_str());
+					if (JC_CLIPBOARD_HISTORY.size() + 1 > JC_MAX_HISTORY_SIZE)
+					{
+						JC_CLIPBOARD_HISTORY.pop_front();
+					}
 					JC_CLIPBOARD_HISTORY.push_back(clip);
+					char buf[1024];
+					sprintf(buf, "CLIP_HISTORY_SIZE=%d", JC_CLIPBOARD_HISTORY.size());
+					jc_log(buf);
+					jc_log(clip.c_str());
 					JC_LAST_CLIPBOARD_ENTRY = clip;
 				}
 			}
-			else jc_appendToLog("Skipping Duplicate");
+			else jc_log("Skipping Duplicate");
 		}
 		else jc_error_and_exit(TEXT("ERROR ACCESS DENIED TO OPENCLIPBOARD"));
 
 		break;
 	}
 	case WM_CHANGECBCHAIN:
-
-		// If the next window is closing, repair the chain. 
-
 		if ((HWND)wParam == hwndNextViewer)
 			hwndNextViewer = (HWND)lParam;
-
-		// Otherwise, pass the message to the next link. 
-
 		else if (hwndNextViewer != NULL)
 			SendMessage(hwndNextViewer, message, wParam, lParam);
-
 		break;
 
 	case WM_DESTROY:
@@ -171,31 +186,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
-			UINT uFlag = MF_BYPOSITION | MF_STRING;
 			GetCursorPos(&lpClickPoint);
-			hPopMenu = CreatePopupMenu();
-			int BASE = 2000;
-			for (int i = 0; i < JC_CLIPBOARD_HISTORY.size(); i++)
-			{
-				std::string item = JC_CLIPBOARD_HISTORY[i];
-				std::string label = trim(item);
-				label.resize(min(item.length(), JC_MAX_MENU_LABEL_LENGTH));
-				if (label.length() == JC_MAX_MENU_LABEL_LENGTH)
-				{
-					label += "...";
-				}
-				if (!item.empty())
-					InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, i + BASE, jc_charToCWSTR(label.c_str()));
-			}
-			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
-			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
-			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
-
-			SetForegroundWindow(hWnd);
-			TrackPopupMenu(hPopMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_BOTTOMALIGN, lpClickPoint.x, lpClickPoint.y, 0, hWnd, NULL);
+			jc_show_popup_menu(lpClickPoint, hWnd);
 			return TRUE;
-			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
-
 		}
 		break;
 	case WM_COMMAND:
@@ -216,7 +209,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			int BASE = 2000;
 			int idx = wmId - BASE;
-			if (idx > 0 && idx < JC_CLIPBOARD_HISTORY.size())
+			if (idx >= 0 && idx < JC_CLIPBOARD_HISTORY.size())
 			{
 				std::string item = JC_CLIPBOARD_HISTORY[idx];
 				jc_set_clipboard(item, hWnd);
@@ -225,17 +218,60 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		}
 		break;
-		/*
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code here...
-		EndPaint(hWnd, &ps);
-		break;*/
+
 
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
+}
+VOID CALLBACK jc_show_menu_at_current_point(
+	HWND hwnd,        // handle to window for timer messages 
+	UINT message,     // WM_TIMER message 
+	UINT idTimer,     // timer identifier 
+	DWORD dwTime)     // current system time 
+{
+
+	RECT rc;
+	POINT pt;
+
+	// If the window is minimized, compare the current 
+	// cursor position with the one from 10 seconds earlier. 
+	// If the cursor position has not changed, move the 
+	// cursor to the icon. 
+
+	if (GetCursorPos(&pt))
+	{
+		jc_show_popup_menu(pt, globalHWND);
+	}
+	else jc_log("Failed to GetCursorPos()");
+}
+
+void jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd)
+{
+	UINT uFlag = MF_BYPOSITION | MF_STRING;
+	//GetCursorPos(&lpClickPoint);
+	hPopMenu = CreatePopupMenu();
+	int BASE = 2000;
+	for (int i = 0; i < JC_CLIPBOARD_HISTORY.size(); i++)
+	{
+		std::string item = JC_CLIPBOARD_HISTORY[i];
+		std::string label = trim(item);
+		label.resize(min(item.length(), JC_MAX_MENU_LABEL_LENGTH));
+		if (label.length() == JC_MAX_MENU_LABEL_LENGTH)
+		{
+			label += "...";
+		}
+		if (!item.empty())
+			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, i + BASE, jc_charToCWSTR(label.c_str()));
+	}
+	InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
+	InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
+	InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
+
+	SetForegroundWindow(hWnd);
+	TrackPopupMenu(hPopMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_BOTTOMALIGN, lpClickPoint.x, lpClickPoint.y, 0, hWnd, NULL);
+
 }
 
 // Message handler for about box.

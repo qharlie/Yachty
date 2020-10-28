@@ -15,13 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_216FC51E14474BE68755ACEE723D0B39"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DBAED5A0B0F941DB83BF626C3BF1A904"
+        "MsmKey" = "8:_28E4EBFA5FAD4F61A06CAB1C649EEFFA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -43,6 +37,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -59,12 +69,34 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_BF4B1DB69633485A9DB8F97C384A55DB"
+            {
+            "Name" = "8:Primary Output from JumpcutForWindows (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_28E4EBFA5FAD4F61A06CAB1C649EEFFA"
+            "FileType" = "3:2"
+            "InstallAction" = "3:2"
+            "Arguments" = "8:INSTALLER"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_93062C75_8239_404A_A76B_BAF08DAA7615"
+            "InstallerClass" = "11:FALSE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -80,26 +112,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_216FC51E14474BE68755ACEE723D0B39"
-            {
-            "SourcePath" = "8:..\\JumpcutW\\Jumpcut.ico"
-            "TargetName" = "8:Jumpcut.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
@@ -138,17 +150,6 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_EAB5CB1B38444C928304E1E35B7A84BB"
-                    {
-                    "Name" = "8:JumpcutW"
-                    "AlwaysCreate" = "11:TRUE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_DB8F15E7062044909D0DA25A15218C8E"
-                        "Folders"
-                        {
-                        }
-                    }
                 }
             }
         }
@@ -166,25 +167,25 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:JumpcutWInstaller"
+        "ProductName" = "8:Jumpcut for Windows"
         "ProductCode" = "8:{138F1F95-DB41-4C0D-9FB0-CFAF1685E822}"
-        "PackageCode" = "8:{24F5EA7C-920D-42B8-B613-667EE328B25F}"
+        "PackageCode" = "8:{81F9A288-87AC-4109-A1DC-ED1983DF80BD}"
         "UpgradeCode" = "8:{40684725-D77A-49F6-AD34-5A43AB70248E}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
-        "RemovePreviousVersions" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "InstallAllUsers" = "11:FALSE"
+        "InstallAllUsers" = "11:TRUE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Default Company Name"
+        "Manufacturer" = "8:Jumpcut"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:JumpcutWInstaller"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Default Company Name"
-        "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:"
-        "ARPURLINFOABOUT" = "8:"
+        "ARPCONTACT" = "8:Charlie Sanders"
+        "Keywords" = "8:Clipboard history"
+        "ARPCOMMENTS" = "8:A Clipboard history tool that saves you copy history and allows one click copying"
+        "ARPURLINFOABOUT" = "8:www.jumpcutw.com"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -288,30 +289,30 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_004E6AC701CB4343896C2BDC6D026704"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_AEC2B269337446D7B350C336A340246E"
             {
-            "Name" = "8:JumpcutW"
+            "Name" = "8:Shortcut to Primary Output from JumpcutForWindows (Active)"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_6BFB49421F8F4986BC4B4B21FB87394D"
-            "Folder" = "8:_6BFB49421F8F4986BC4B4B21FB87394D"
-            "WorkingFolder" = "8:_6BFB49421F8F4986BC4B4B21FB87394D"
+            "Target" = "8:_28E4EBFA5FAD4F61A06CAB1C649EEFFA"
+            "Folder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
+            "WorkingFolder" = "8:_8E4C4DAA568747818593D4DABEA3C142"
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_0216F1FB3CB14CB5B02E12893292D012"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E4593976735A4879B76F2EFB5A850172"
             {
-            "Name" = "8:Shortcut to JumpcutW"
+            "Name" = "8:Shortcut to Primary Output from JumpcutForWindows (Active)"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_EAB5CB1B38444C928304E1E35B7A84BB"
-            "Folder" = "8:_8E4C4DAA568747818593D4DABEA3C142"
+            "Target" = "8:_28E4EBFA5FAD4F61A06CAB1C649EEFFA"
+            "Folder" = "8:_6BFB49421F8F4986BC4B4B21FB87394D"
             "WorkingFolder" = "8:_8E4C4DAA568747818593D4DABEA3C142"
             "Icon" = "8:"
             "Feature" = "8:"
@@ -715,12 +716,12 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_DBAED5A0B0F941DB83BF626C3BF1A904"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_28E4EBFA5FAD4F61A06CAB1C649EEFFA"
             {
             "SourcePath" = "8:..\\Debug\\JumpcutForWindows.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
+            "Folder" = "8:_8E4C4DAA568747818593D4DABEA3C142"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"

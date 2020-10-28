@@ -65,16 +65,17 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 22, 17, 202, 71
+IDD_ABOUTBOX DIALOGEX 22, 17, 163, 148
 STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Jumpcut For Windows"
 FONT 12, "Verdana", 400, 0, 0x0
 BEGIN
-    ICON            IDI_JUMPCUT,IDC_MYICON,10,28,10,10
-    LTEXT           "Jumpcut for Windows , Version 0.1",IDC_STATIC,29,11,119,8,SS_NOPREFIX
-    DEFPUSHBUTTON   "OK",IDOK,168,31,30,11,WS_GROUP
-    LTEXT           "This is a windows rewrite of Jumpcut for MacOS https://snark.github.io/jumpcut/",IDC_STATIC,29,22,133,18,SS_NOPREFIX
-    LTEXT           "Jumpcut for Windows is licensed uner the MIT License.",IDC_STATIC,29,43,131,18,SS_NOPREFIX
+    ICON            IDI_JUMPCUT,IDC_MYICON,6,13,10,10
+    LTEXT           "Jumpcut for Windows , Version 0.1",IDC_STATIC,32,14,119,8,SS_NOPREFIX
+    DEFPUSHBUTTON   "OK",IDOK,120,126,30,11,WS_GROUP
+    LTEXT           "This is a windows rewrite of Jumpcut for MacOS https://snark.github.io/jumpcut/.",IDC_STATIC,23,35,133,18,SS_NOPREFIX
+    LTEXT           "JumcuptW records your clipboard history accessible by left clicking the JumpcutW icon in the task tray.  Selecting an item will copy that value to the current clipboard.",IDC_STATIC,23,54,131,45,SS_NOPREFIX
+    LTEXT           "Jumpcut for Windows is licensed uner the MIT License by Charles Sanders.",IDC_STATIC,23,100,131,18,SS_NOPREFIX
 END
 
 
@@ -116,7 +117,6 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
-        BOTTOMMARGIN, 70
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -130,7 +130,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_APP_TITLE           "JUMPCUT"
-    IDS_APPTOOLTIP          "SysTray Demo"
+    IDS_APPTOOLTIP          "Jumpcut"
     IDC_JUMPCUT             "JUMPCUT"
 END
 
