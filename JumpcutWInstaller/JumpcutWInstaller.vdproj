@@ -19,6 +19,18 @@
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_656791B5119A45DFA24F17BAB0528C3D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6AACF871F511487BA18A4A6FA570FE63"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -112,6 +124,46 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_656791B5119A45DFA24F17BAB0528C3D"
+            {
+            "SourcePath" = "8:..\\JumpcutW\\launcher.bat"
+            "TargetName" = "8:launcher.bat"
+            "Tag" = "8:"
+            "Folder" = "8:_8E4C4DAA568747818593D4DABEA3C142"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6AACF871F511487BA18A4A6FA570FE63"
+            {
+            "SourcePath" = "8:..\\JumpcutW\\launcher.bat"
+            "TargetName" = "8:launcher.bat"
+            "Tag" = "8:"
+            "Folder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -718,7 +770,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_28E4EBFA5FAD4F61A06CAB1C649EEFFA"
             {
-            "SourcePath" = "8:..\\Debug\\JumpcutForWindows.exe"
+            "SourcePath" = "8:..\\Release\\JumpcutForWindows.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_8E4C4DAA568747818593D4DABEA3C142"

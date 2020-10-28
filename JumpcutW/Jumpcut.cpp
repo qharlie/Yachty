@@ -20,13 +20,40 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 void jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK	jc_show_about_dialog(HWND, UINT, WPARAM, LPARAM);
 HWND hwndNextViewer;
 HWND globalHWND;
 
 char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
 int JC_MAX_MENU_LABEL_LENGTH = 65;
 
+VOID startup(LPCTSTR lpApplicationName)
+{
+	// additional information
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	// set the size of the structures
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+
+	// start the program up
+	CreateProcess(lpApplicationName,   // the path
+		NULL,        // Command line
+		NULL,           // Process handle not inheritable
+		NULL,           // Thread handle not inheritable
+		FALSE,          // Set handle inheritance to FALSE
+		0,              // No creation flags
+		NULL,           // Use parent's environment block
+		NULL,           // Use parent's starting directory 
+		&si,            // Pointer to STARTUPINFO structure
+		&pi             // Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
+	);
+	// Close process and thread handles. 
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+}
 // main entry point 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -37,6 +64,17 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	sprintf(JC_LOG_FILE, "%s\\.jc_log.txt", JC_USERS_HOME_DIRECTORY);
 	sprintf(JC_HISTORY_FILE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
+	
+	LPWSTR* szArgList;
+	int argCount;
+	char buffer[500];
+
+	szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
+	if (argCount == 2)
+	{
+		startup(szArgList[0]);
+		return 0;
+	}
 
 	// #Ensure only one version of the app 
 	HANDLE hMutex = OpenMutex(
@@ -199,7 +237,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, jc_show_about_dialog);
 			break;
 		case IDM_EXIT:
 			Shell_NotifyIcon(NIM_DELETE, &nidApp);
@@ -275,7 +313,7 @@ void jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd)
 }
 
 // Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK jc_show_about_dialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
 	switch (message)
