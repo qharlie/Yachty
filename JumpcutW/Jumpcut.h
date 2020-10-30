@@ -82,11 +82,24 @@ inline std::string& trim(std::string& s, const char* t = JS_WHITESPACE)
 // Convert to wide char 
 wchar_t* jc_charToCWSTR(const char* charArray)
 {
+
 	wchar_t* wString = new wchar_t[4096];
 	MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, 4096);
 	return wString;
 }
+// Convert from wide char 
+std::string jc_CWSTRToString(const wchar_t* charArray)
+{
 
+	int len = wcslen(charArray);
+	char *str = new char[len];
+	memset(str, 0, len);
+	wcstombs(str, charArray, 12);
+	std::string ret = std::string(str);
+	delete str;
+
+	return ret;
+}
 template <typename T>
 void moveItemToBack(std::vector<T>& v, size_t itemIndex)
 {

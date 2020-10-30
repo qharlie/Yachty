@@ -15,6 +15,24 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "docicon.png"
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Hebrew (Israel) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HEB)
@@ -65,17 +83,17 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 22, 17, 163, 148
+IDD_ABOUTBOX DIALOGEX 22, 17, 163, 154
 STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Jumpcut For Windows"
 FONT 12, "Verdana", 400, 0, 0x0
 BEGIN
-    ICON            IDI_JUMPCUT,IDC_MYICON,6,13,10,10
-    LTEXT           "Jumpcut for Windows , Version 0.1",IDC_STATIC,32,14,119,8,SS_NOPREFIX
-    DEFPUSHBUTTON   "OK",IDOK,120,126,30,11,WS_GROUP
-    LTEXT           "This is a windows rewrite of Jumpcut for MacOS https://snark.github.io/jumpcut/.",IDC_STATIC,23,35,133,18,SS_NOPREFIX
-    LTEXT           "JumcuptW records your clipboard history accessible by left clicking the JumpcutW icon in the task tray.  Selecting an item will copy that value to the current clipboard.",IDC_STATIC,23,54,131,45,SS_NOPREFIX
-    LTEXT           "Jumpcut for Windows is licensed uner the MIT License by Charles Sanders.",IDC_STATIC,23,100,131,18,SS_NOPREFIX
+    LTEXT           "JumpcutW v0.1",IDC_STATIC,56,14,51,8,SS_NOPREFIX
+    DEFPUSHBUTTON   "OK",IDOK,121,135,30,11,WS_GROUP
+    LTEXT           "This is a windows rewrite of Jumpcut for MacOS https://snark.github.io/jumpcut",IDC_STATIC,9,88,139,18,SS_NOPREFIX
+    LTEXT           "JumcuptW records your clipboard history and makes it accessible by left clicking the JumpcutW icon ",IDC_STATIC,9,29,134,25,SS_NOPREFIX,WS_EX_TRANSPARENT
+    LTEXT           "Selecting an item will copy that value to the current clipboard.",IDC_STATIC,9,59,138,18,SS_NOPREFIX
+    LTEXT           "JumpcutW is licensed uner the MIT License by Charles Sanders.",IDC_STATIC,9,108,137,18,SS_NOPREFIX
 END
 
 

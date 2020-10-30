@@ -2,12 +2,12 @@
 #include "stdafx.h"
 #include "Jumpcut.h"
 #include <stdio.h>
-
+#include "resource.h"
 #define MAX_LOADSTRING 100
 #define	WM_USER_SHELLICON WM_USER + 1
 
 // Global Variables:
-HINSTANCE hInst;	// current instance
+HINSTANCE globalInstance;	// current instance
 NOTIFYICONDATA nidApp;
 HMENU hPopMenu;
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
@@ -64,7 +64,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	sprintf(JC_LOG_FILE, "%s\\.jc_log.txt", JC_USERS_HOME_DIRECTORY);
 	sprintf(JC_HISTORY_FILE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
-	
+
+	globalInstance = hInstance;
 	LPWSTR* szArgList;
 	int argCount;
 	char buffer[500];
@@ -140,8 +141,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	HICON hMainIcon;
-
-	hInst = hInstance; // Store instance handle in our global variable
 
 	globalHWND = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
@@ -237,7 +236,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, jc_show_about_dialog);
+			DialogBox(globalInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, jc_show_about_dialog);
 			break;
 		case IDM_EXIT:
 			Shell_NotifyIcon(NIM_DELETE, &nidApp);
@@ -263,20 +262,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
-VOID CALLBACK jc_show_menu_at_current_point(
-	HWND hwnd,        // handle to window for timer messages 
-	UINT message,     // WM_TIMER message 
-	UINT idTimer,     // timer identifier 
-	DWORD dwTime)     // current system time 
-{
+VOID CALLBACK jc_show_menu_at_current_point(HWND hwnd, UINT message, UINT idTimer, DWORD dwTime) {
 
 	RECT rc;
 	POINT pt;
-
-	// If the window is minimized, compare the current 
-	// cursor position with the one from 10 seconds earlier. 
-	// If the cursor position has not changed, move the 
-	// cursor to the icon. 
 
 	if (GetCursorPos(&pt))
 	{
@@ -303,11 +292,29 @@ void jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd)
 		if (!item.empty())
 			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, i + BASE, jc_charToCWSTR(label.c_str()));
 	}
-	InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
+	if (JC_CLIPBOARD_HISTORY.size() > 0)
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
 	InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
 	InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
 
 	SetForegroundWindow(hWnd);
+
+	HBITMAP hBitmap = (HBITMAP)LoadImage(globalInstance,
+		MAKEINTRESOURCE(IDB_PNG1),
+		IMAGE_ICON,
+		32,
+		32,
+		LR_DEFAULTCOLOR);
+	MENUITEMINFO mii = { 0 };
+	mii.cbSize = sizeof(mii);
+	if (!GetMenuItemInfo(hPopMenu, IDM_ABOUT, false, &mii)) {
+		jc_error_and_exit(TEXT("getMenuItemInfo"));
+	}
+	mii.fMask |= MIIM_BITMAP;
+	mii.hbmpItem = hBitmap;
+	mii.fType = MIIM_BITMAP;
+	if (!SetMenuItemInfo(hPopMenu, IDM_ABOUT, false, &mii)) { jc_alert("FAILED"); }
+
 	TrackPopupMenu(hPopMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_BOTTOMALIGN, lpClickPoint.x, lpClickPoint.y, 0, hWnd, NULL);
 
 }

@@ -97,6 +97,7 @@
     <ClInclude Include="Jumpcut.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="docicon.png" />
     <Image Include="small.ico" />
     <Image Include="Jumpcut.ico" />
   </ItemGroup>
