@@ -88,6 +88,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -219,9 +227,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Jumpcut for Windows"
+        "ProductName" = "8:JumpcutW"
         "ProductCode" = "8:{138F1F95-DB41-4C0D-9FB0-CFAF1685E822}"
-        "PackageCode" = "8:{81F9A288-87AC-4109-A1DC-ED1983DF80BD}"
+        "PackageCode" = "8:{8C47D58C-BE7D-4B08-BAFE-B21DF011F65C}"
         "UpgradeCode" = "8:{40684725-D77A-49F6-AD34-5A43AB70248E}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -229,7 +237,7 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Jumpcut"
+        "Manufacturer" = "8:JumpcutW"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:JumpcutWInstaller"
@@ -237,7 +245,7 @@
         "ARPCONTACT" = "8:Charlie Sanders"
         "Keywords" = "8:Clipboard history"
         "ARPCOMMENTS" = "8:A Clipboard history tool that saves you copy history and allows one click copying"
-        "ARPURLINFOABOUT" = "8:www.jumpcutw.com"
+        "ARPURLINFOABOUT" = "8:https://github.com/qorrect/JumpcutW"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
