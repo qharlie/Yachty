@@ -17,9 +17,9 @@ JumpcutW is a clone of the famous Jumpcut for MacOS https://snark.github.io/jump
 
 With Windows 10 you have to tell it which icons you want visible, hit Start->Type "Taskbar Settings", Scroll Down untill you find the phrase "Select which icons appear on the taskbar" , and toggle JumpcutW.exe to ON.
 
-![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/taskbar1.png?raw=true)
+![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/toolbar1.png?raw=true)
 
-![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/taskbar2.png?raw=true)
+![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/toolbar2.png?raw=true)
 
-![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/taskbar3.png?raw=true)
+![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/toolbar3.png?raw=true)
 
