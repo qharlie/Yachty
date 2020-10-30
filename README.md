@@ -8,7 +8,8 @@ JumpcutW is a clone of the famous Jumpcut for MacOS https://snark.github.io/jump
 
 # Installing
 
-Prebuilt binaries for Windows 10 are here [x86/64 Installer](https://github.com/qorrect/JumpcutW/blob/main/Binaries/JumpcutWInstaller.msi?raw=true) , im working on getting it on the Microsoft Store.
+Prebuilt binaries for Windows 10 are below:
+ - [Version 0.1 Installer](https://github.com/qorrect/JumpcutW/blob/main/Binaries/JumpcutWInstaller.msi?raw=true)
 
 # Building from source
 Building the project can be done with the free Visual Studio Community Edition 2019 by opening JumpcutW.sln.  The installer project is in the same solution. 
