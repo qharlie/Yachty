@@ -7,13 +7,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="e26b3601-8672-4cde-9743-ea02f77084cf"
-    Publisher="CN=q"
+    Name="35363TheCharlieCompany.Jumpcut"
+    Publisher="CN=283133A9-7713-48E1-B1C7-6333DC9B0261"
     Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>JumpcutUWP</DisplayName>
-    <PublisherDisplayName>q</PublisherDisplayName>
+    <DisplayName>Jumpcut</DisplayName>
+    <PublisherDisplayName>The Charlie Company</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -31,7 +31,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="JumpcutUWP"
+        DisplayName="Jumpcut"
         Description="JumpcutUWP"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
