@@ -91,7 +91,7 @@ BEGIN
     LTEXT           "JumpcutW v0.1",IDC_STATIC,56,14,51,8,SS_NOPREFIX
     DEFPUSHBUTTON   "OK",IDOK,121,135,30,11,WS_GROUP
     LTEXT           "This is a windows rewrite of Jumpcut for MacOS https://snark.github.io/jumpcut",IDC_STATIC,9,88,139,18,SS_NOPREFIX
-    LTEXT           "JumcuptW records your clipboard history and makes it accessible by left clicking the JumpcutW icon .",IDC_STATIC,9,29,134,25,SS_NOPREFIX,WS_EX_TRANSPARENT
+    LTEXT           "JumcuptW records your clipboard history and makes it accessible by left clicking the JumpcutW icon.",IDC_STATIC,9,29,134,25,SS_NOPREFIX,WS_EX_TRANSPARENT
     LTEXT           "Selecting an item will copy that value to the current clipboard.",IDC_STATIC,9,59,138,18,SS_NOPREFIX
     LTEXT           "JumpcutW is licensed uner the MIT License by Charles Sanders.",IDC_STATIC,9,108,137,18,SS_NOPREFIX
 END
