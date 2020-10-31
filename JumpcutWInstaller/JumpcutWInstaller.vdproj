@@ -138,6 +138,17 @@
                 {
                 }
             }
+            "{1525181F-901A-416C-8A58-119130FE478E}:_37B9FE75612F4F87987DC2B0AA0270F1"
+            {
+            "Name" = "8:#1928"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:StartupFolder"
+                "Folders"
+                {
+                }
+            }
             "{1525181F-901A-416C-8A58-119130FE478E}:_6BFB49421F8F4986BC4B4B21FB87394D"
             {
             "Name" = "8:#1916"
@@ -297,6 +308,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_3072D862CE1E4AC9B3B37E10CC6008C4"
+            {
+            "Name" = "8:Shortcut to Primary Output from JumpcutW (Release Win32)"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_203B5F8D38ED4DC6A340414AC6321EA9"
+            "Folder" = "8:_37B9FE75612F4F87987DC2B0AA0270F1"
+            "WorkingFolder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {
