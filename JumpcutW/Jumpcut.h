@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+#include <string>
 #include <strsafe.h>
 #include "resource.h"
 #include <iostream>
@@ -58,7 +59,22 @@ void jc_error_and_exit(LPTSTR lpszFunction)
 	ExitProcess(dw);
 }
 
-
+bool replace(std::string& str, const std::string& from, const std::string& to) {
+	size_t start_pos = str.find(from);
+	if (start_pos == std::string::npos)
+		return false;
+	str.replace(start_pos, from.length(), to);
+	return true;
+}
+void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+	if (from.empty())
+		return;
+	size_t start_pos = 0;
+	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+	}
+}
 // trim from end of string (right)
 inline std::string& rtrim(std::string& s, const char* t = JS_WHITESPACE) {
 	s.erase(s.find_last_not_of(t) + 1);
@@ -78,50 +94,28 @@ inline std::string& trim(std::string& s, const char* t = JS_WHITESPACE) {
 
 // Convert to wide char 
 wchar_t* jc_charToCWSTR(const char* charArray) {
-
-	wchar_t* wString = new wchar_t[4096];
-	MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, 4096);
+	int len = strlen(charArray);
+	wchar_t* wString = new wchar_t[len + 1];
+	MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, len + 1);
 	return wString;
 }
 // Convert from wide char 
 std::string jc_CWSTRToString(const wchar_t* charArray) {
 
 	int len = wcslen(charArray);
-	char* str = new char[len];
+	char* str = new char[len + 1];
 	memset(str, 0, len);
-	wcstombs(str, charArray, 12);
+	wcstombs(str, charArray, len + 1);
 	std::string ret = std::string(str);
 	delete str;
 
 	return ret;
-}
-template <typename T>
-void moveItemToBack(std::vector<T>& v, size_t itemIndex) {
-	auto it = v.begin() + itemIndex;
-	std::rotate(it, it + 1, v.end());
 }
 
 template <typename T>
 void moveItemToBack(std::deque<T>& v, size_t itemIndex) {
 	auto it = v.begin() + itemIndex;
 	std::rotate(it, it + 1, v.end());
-}
-
-template < typename T>
-std::pair<bool, int > findInCollection(const std::vector<T>& vecOfElements, const T& element) {
-	std::pair<bool, int > result;
-	auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
-	if (it != vecOfElements.end())
-	{
-		result.second = distance(vecOfElements.begin(), it);
-		result.first = true;
-	}
-	else
-	{
-		result.first = false;
-		result.second = -1;
-	}
-	return result;
 }
 
 template < typename T>
@@ -140,28 +134,7 @@ std::pair<bool, int > findInCollection(const std::deque<T>& vecOfElements, const
 	}
 	return result;
 }
-template <typename T, int MaxLen, typename Container = std::deque<T>>
-class FixedQueue : public std::deque<T, Container> {
-public:
-	void push(const T& value) {
-		if (this->size() == MaxLen) {
-			this->c.pop_front();
-		}
-		this->push_back(value);
-	}
-};
 
-
-template <typename T, int MaxLen, typename Container = std::vector<T>>
-class FixedVector : public std::vector<T, Container> {
-public:
-	void push(const T& value) {
-		if (this->size() == MaxLen) {
-			this->c.pop_front();
-		}
-		std::vector<T, Container>::push(value);
-	}
-};
 
 BOOL jc_wait_on_clipboard(HWND hWnd, int maxRetryCount = JC_MAX_RETRY_COUNT)
 {
@@ -206,11 +179,17 @@ void jc_set_clipboard(std::string item, HWND hWnd)
 	}
 	else jc_error_and_exit(TEXT("SET_CLIPBOARD"));
 }
-void jc_appendToFile(const char* fileName, const char* message)
+
+void jc_appendToFile(const char* fileName, const char* message, bool shouldReplaceNewLines = false)
 {
+	string s = message;
+	if (shouldReplaceNewLines)
+	{
+		replaceAll(s, "\r\n", "\\\\n");
+	}
 	ofstream myfile;
 	myfile.open(fileName, std::ios_base::app);
-	myfile << message << "\n";
+	myfile << s << "\n";
 	myfile.close();
 
 }
@@ -221,9 +200,53 @@ void jc_log(const char* msg)
 }
 
 
-void jc_save_history(const char* msg)
+void jc_history(const char* msg)
 {
-	jc_appendToFile(JC_HISTORY_FILE, msg);
+	jc_appendToFile(JC_HISTORY_FILE, msg, true);
+}
+
+bool read_file_as_lines(std::string fileName, std::vector<std::string>& vecOfStrs)
+{
+	// Open the File
+	std::ifstream in(fileName.c_str());
+	// Check if object is valid
+	if (!in)
+	{
+		std::cerr << "Cannot open the File : " << fileName << std::endl;
+		return false;
+	}
+	std::string str;
+	// Read the next line from File untill it reaches the end.
+	while (std::getline(in, str))
+	{
+		// Line contains string of length > 0 then save it in vector
+		if (str.size() > 0)
+			vecOfStrs.push_back(str);
+	}
+	//Close The File
+	in.close();
+	return true;
+}
+void jc_load_history_file() {
+	std::vector<string> lines;
+	JC_CLIPBOARD_HISTORY.clear();
+	//JC_CLIPBOARD_HISTORY.
+	if (read_file_as_lines(JC_HISTORY_FILE, lines))
+	{
+		int start_index = max(0, lines.size() - 50);
+		for (int count = 0; count < 50; count++)
+		{
+			int idx = start_index + count;
+			if (idx < lines.size())
+			{
+				string clip = lines[idx];
+				replaceAll(clip, "\\\\n", "\r\n");
+				JC_CLIPBOARD_HISTORY.push_back(clip);
+			}
+		}
+
+	}
+
 }
 
 std::string jc_get_clipboard(HWND hWnd)

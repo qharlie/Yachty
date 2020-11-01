@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_203B5F8D38ED4DC6A340414AC6321EA9"
+        "MsmKey" = "8:_477AA8CE00F845D288B85994594A2C50"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -91,20 +91,6 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_475FD2E7370F4377BB597265F95F6C55"
-            {
-            "Name" = "8:Primary Output from JumpcutW (Release Win32)"
-            "Condition" = "8:"
-            "Object" = "8:_203B5F8D38ED4DC6A340414AC6321EA9"
-            "FileType" = "3:2"
-            "InstallAction" = "3:2"
-            "Arguments" = "8:/Commit"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_51A8CBF3_D74C_4D78_9B54_6B9293066AA8"
-            "InstallerClass" = "11:FALSE"
-            "CustomActionData" = "8:"
-            }
         }
         "DefaultFeature"
         {
@@ -308,15 +294,15 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_3072D862CE1E4AC9B3B37E10CC6008C4"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_23AB09DA416C4AC3907990B65236D105"
             {
-            "Name" = "8:Shortcut to Primary Output from JumpcutW (Release Win32)"
+            "Name" = "8:Shortcut to Primary Output from JumpcutW (Active)"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_203B5F8D38ED4DC6A340414AC6321EA9"
+            "Target" = "8:_477AA8CE00F845D288B85994594A2C50"
             "Folder" = "8:_37B9FE75612F4F87987DC2B0AA0270F1"
             "WorkingFolder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
             "Icon" = "8:"
@@ -721,9 +707,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_203B5F8D38ED4DC6A340414AC6321EA9"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_477AA8CE00F845D288B85994594A2C50"
             {
-            "SourcePath" = "8:..\\Release\\JumpcutW.exe"
+            "SourcePath" = "8:..\\x64\\Release\\JumpcutW.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
@@ -741,7 +727,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:Release|Win32"
+            "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}"
             "ShowKeyOutput" = "11:TRUE"

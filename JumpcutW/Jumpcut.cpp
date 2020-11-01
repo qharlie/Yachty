@@ -7,7 +7,6 @@
 #define	WM_USER_SHELLICON WM_USER + 1
 
 
-int _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow);
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -117,6 +116,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 	AddClipboardFormatListener(globalHWND);
+	jc_load_history_file();
+
 	hMainIcon = LoadIcon(hInstance, (LPCTSTR)MAKEINTRESOURCE(IDI_JUMPCUT));
 
 	nidApp.cbSize = sizeof(NOTIFYICONDATA); // sizeof the struct in bytes 
@@ -151,11 +152,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					moveItemToBack(JC_CLIPBOARD_HISTORY, result.second);
 				}
 				else {
-					jc_save_history(clip.c_str());
 					if (JC_CLIPBOARD_HISTORY.size() + 1 > JC_MAX_HISTORY_SIZE) {
 						JC_CLIPBOARD_HISTORY.pop_front();
 					}
 					JC_CLIPBOARD_HISTORY.push_back(clip);
+					jc_history(clip.c_str());
 					jc_log(clip.c_str());
 					JC_LAST_CLIPBOARD_ENTRY = clip;
 				}
