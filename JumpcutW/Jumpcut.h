@@ -15,7 +15,7 @@ using namespace std;
 char JC_LOG_FILE[65535];
 char JC_HISTORY_FILE[65535];
 const int JC_MAX_MENU_LABEL_LENGTH = 65;
-char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
+const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
 const char* JS_WHITESPACE = " \t\n\r\f\v";
 const UINT JC_MAX_RETRY_COUNT = 5;
 const UINT JC_MAX_HISTORY_SIZE = 50;
@@ -259,7 +259,9 @@ std::string jc_get_clipboard(HWND hWnd)
 		char* pchData = (char*)GlobalLock(hClipboardData);
 		CloseClipboard();
 		GlobalUnlock(hClipboardData);
-		return std::string(pchData);
+		if (pchData)
+			return std::string(pchData);
+		else return "";
 	}
 	else {
 		jc_error_and_exit(TEXT("ERROR ACCESS DENIED TO OPENCLIPBOARD"));
@@ -374,12 +376,15 @@ INT_PTR CALLBACK jc_show_about_dialog(HWND hDlg, UINT message, WPARAM wParam, LP
 	}
 	return (INT_PTR)FALSE;
 }
-BOOLEAN jc_is_only_instance() {
+BOOLEAN jc_is_already_running() {
 	HANDLE hMutex = OpenMutex(MUTEX_ALL_ACCESS, 0, jc_charToCWSTR(JC_APPLICATION_NAME));
 
-	if (!hMutex)
+	if (!hMutex) {
 		hMutex =
-		CreateMutex(0, 0, jc_charToCWSTR(JC_APPLICATION_NAME));
-	else
+			CreateMutex(0, 0, jc_charToCWSTR(JC_APPLICATION_NAME));
 		return 0;
+	}
+	else {
+		return 1;
+	}
 }

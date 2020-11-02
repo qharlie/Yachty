@@ -51,7 +51,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	// #Ensure only one version of the app 
-	if (!jc_is_only_instance()) return 0;
+	if (jc_is_already_running()) return 0;
 
 	MSG msg;
 	HACCEL hAccelTable;
