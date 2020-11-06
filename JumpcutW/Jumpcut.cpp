@@ -198,6 +198,8 @@ int jc_get_key_code_from_string(string item)
 
 
 }
+
+
 void jc_load_hotkeys(char* config)
 {
 
