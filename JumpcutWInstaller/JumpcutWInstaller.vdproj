@@ -91,6 +91,20 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_8FC69FA731184EADB1EB7B2513E61F99"
+            {
+            "Name" = "8:Primary Output from JumpcutW (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_477AA8CE00F845D288B85994594A2C50"
+            "FileType" = "3:2"
+            "InstallAction" = "3:2"
+            "Arguments" = "8:INSTALL"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_DCF12075_4520_4B66_9415_3728AB7D1D8B"
+            "InstallerClass" = "11:FALSE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -304,6 +318,20 @@
             "Transitive" = "11:FALSE"
             "Target" = "8:_477AA8CE00F845D288B85994594A2C50"
             "Folder" = "8:_37B9FE75612F4F87987DC2B0AA0270F1"
+            "WorkingFolder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C6D9B3AB6E574F21A14BA4069AD547AC"
+            {
+            "Name" = "8:Shortcut to Primary Output from JumpcutW (Active)"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_477AA8CE00F845D288B85994594A2C50"
+            "Folder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
             "WorkingFolder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
             "Icon" = "8:"
             "Feature" = "8:"

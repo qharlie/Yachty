@@ -14,6 +14,8 @@ using namespace std;
 // Globals and constants 
 char JC_LOG_FILE[65535];
 char JC_HISTORY_FILE[65535];
+char JC_CONFIG_FILE[65535];
+
 const int JC_MAX_MENU_LABEL_LENGTH = 65;
 const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
 const char* JS_WHITESPACE = " \t\n\r\f\v";
@@ -23,6 +25,18 @@ const char* JC_APPLICATION_NAME = "JumpcutW_v0.1";
 std::string JC_LAST_CLIPBOARD_ENTRY;
 std::deque<std::string> JC_CLIPBOARD_HISTORY;
 
+string HWNDToString(HWND inputA)
+{
+	string s;
+	int len = GetWindowTextLength(inputA);
+	if (len > 0)
+	{
+		s.resize(len + 1);
+		len = GetWindowTextA(inputA, &s[0], s.size());
+		s.resize(len);
+	}
+	return s;
+}
 // Bail out with an error mesage 
 void jc_error_and_exit(LPTSTR lpszFunction)
 {
@@ -59,6 +73,33 @@ void jc_error_and_exit(LPTSTR lpszFunction)
 	ExitProcess(dw);
 }
 
+bool case_insensitive_match(string s1, string s2) {
+	//convert s1 and s2 into lower case strings
+	transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
+	transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
+	if (s1.compare(s2) == 0)
+		return 1; //The strings are same
+	return 0; //not matched
+}
+
+std::vector<std::string> split_string(const std::string& str,
+	const std::string& delimiter)
+{
+	std::vector<std::string> strings;
+
+	std::string::size_type pos = 0;
+	std::string::size_type prev = 0;
+	while ((pos = str.find(delimiter, prev)) != std::string::npos)
+	{
+		strings.push_back(str.substr(prev, pos - prev));
+		prev = pos + delimiter.size();
+	}
+
+	// To get the last substring (or only, if delimiter is not found)
+	strings.push_back(str.substr(prev));
+
+	return strings;
+}
 bool replace(std::string& str, const std::string& from, const std::string& to) {
 	size_t start_pos = str.find(from);
 	if (start_pos == std::string::npos)
@@ -180,7 +221,7 @@ void jc_set_clipboard(std::string item, HWND hWnd)
 	else jc_error_and_exit(TEXT("SET_CLIPBOARD"));
 }
 
-void jc_appendToFile(const char* fileName, const char* message, bool shouldReplaceNewLines = false)
+void jc_append_file(const char* fileName, const char* message, bool shouldReplaceNewLines = false)
 {
 	string s = message;
 	if (shouldReplaceNewLines)
@@ -188,6 +229,7 @@ void jc_appendToFile(const char* fileName, const char* message, bool shouldRepla
 		replaceAll(s, "\r\n", "\\\\n");
 	}
 	ofstream myfile;
+	myfile.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 	myfile.open(fileName, std::ios_base::app);
 	myfile << s << "\n";
 	myfile.close();
@@ -196,13 +238,13 @@ void jc_appendToFile(const char* fileName, const char* message, bool shouldRepla
 
 void jc_log(const char* msg)
 {
-	jc_appendToFile(JC_LOG_FILE, msg);
+	jc_append_file(JC_LOG_FILE, msg);
 }
 
 
 void jc_history(const char* msg)
 {
-	jc_appendToFile(JC_HISTORY_FILE, msg, true);
+	jc_append_file(JC_HISTORY_FILE, msg, true);
 }
 
 bool read_file_as_lines(std::string fileName, std::vector<std::string>& vecOfStrs)

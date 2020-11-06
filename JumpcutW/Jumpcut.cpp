@@ -5,7 +5,7 @@
 #include "resource.h"
 #define MAX_LOADSTRING 100
 #define	WM_USER_SHELLICON WM_USER + 1
-
+#define JC_HOTKEY 9000
 
 
 // Forward declarations of functions included in this code module:
@@ -24,9 +24,22 @@ TCHAR szApplicationToolTip[MAX_LOADSTRING];	    // the main window class name
 BOOL bDisable = FALSE;							// keep application state
 HWND hwndNextViewer;
 HWND globalHWND;
+HWND callingWindowHWND;
 
+BOOL CALLBACK EnumChildWinProc(HWND hwnd, LPARAM lParam)
+{
+	if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/)
+	{
+		//EnumChildWindows(hwnd, EnumChildWinProc, NULL);
 
+		jc_log(HWNDToString(hwnd).c_str());
+		PostMessage(hwnd, WM_PASTE, 0, 0);
+		PostMessage(hwnd, WM_COMMAND, WM_PASTE, 0);
 
+	}
+	return TRUE;
+
+}
 // main entry point 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -37,6 +50,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	sprintf(JC_LOG_FILE, "%s\\.jc_log.txt", JC_USERS_HOME_DIRECTORY);
 	sprintf(JC_HISTORY_FILE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
+	sprintf(JC_CONFIG_FILE, "%s\\.jc_config.txt", JC_USERS_HOME_DIRECTORY);
 
 	globalInstance = hInstance;
 	LPWSTR* szArgList;
@@ -61,6 +75,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	MyRegisterClass(hInstance);
 	//UINT_PTR timerid = SetTimer(NULL, 0, 5000, (TIMERPROC)jc_show_menu_at_current_point);
+
 
 	// Perform application initialization:
 	if (!InitInstance(hInstance, nCmdShow))
@@ -104,6 +119,121 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	return RegisterClassEx(&wcex);
 }
 
+int GetModifierCode(string item)
+{
+	if (case_insensitive_match("control", item))
+	{
+		return MOD_CONTROL;
+	}
+	else if (case_insensitive_match("shift", item))
+	{
+		return MOD_SHIFT;
+	}
+	else if (case_insensitive_match("alt", item))
+	{
+		return MOD_ALT;
+	}
+	else if (case_insensitive_match("windows", item))
+	{
+		return MOD_WIN;
+	}
+	else jc_log(std::string("Couldnt recognize key code " + item).c_str());
+	return 0;
+}
+
+int GetKeyCode(string item)
+{
+	if (item == "0") return 0x30;
+	else if (item == "1") return 0x31;
+	else if (item == "2") return 0x32;
+	else if (item == "3") return 0x33;
+	else if (item == "4") return 0x34;
+	else if (item == "5") return 0x35;
+	else if (item == "6") return 0x36;
+	else if (item == "7") return 0x37;
+	else if (item == "8") return 0x38;
+	else if (item == "9") return 0x39;
+	else if (item == "A" || item == "a") return 0x41;
+	else if (item == "B" || item == "b") return 0x42;
+	else if (item == "C" || item == "c") return 0x43;
+	else if (item == "D" || item == "d") return 0x44;
+	else if (item == "E" || item == "e") return 0x45;
+	else if (item == "F" || item == "f") return 0x46;
+	else if (item == "G" || item == "g") return 0x47;
+	else if (item == "H" || item == "h") return 0x48;
+	else if (item == "I" || item == "i") return 0x49;
+	else if (item == "J" || item == "j") return 0x4A;
+	else if (item == "K" || item == "k") return 0x4B;
+	else if (item == "L" || item == "l") return 0x4C;
+	else if (item == "M" || item == "m") return 0x4D;
+	else if (item == "N" || item == "n") return 0x4E;
+	else if (item == "O" || item == "o") return 0x4F;
+	else if (item == "P" || item == "p") return 0x50;
+	else if (item == "Q" || item == "q") return 0x51;
+	else if (item == "R" || item == "r") return 0x52;
+	else if (item == "S" || item == "s") return 0x53;
+	else if (item == "T" || item == "t") return 0x54;
+	else if (item == "U" || item == "u") return 0x55;
+	else if (item == "V" || item == "v") return 0x56;
+	else if (item == "W" || item == "w") return 0x57;
+	else if (item == "X" || item == "x") return 0x58;
+	else if (item == "Y" || item == "y") return 0x59;
+	else if (item == "Z" || item == "z") return 0x5A;
+
+	else if (item == "F1" || item == "f1") return VK_F1;
+	else if (item == "F2" || item == "f2") return VK_F2;
+	else if (item == "F3" || item == "f3") return VK_F3;
+	else if (item == "F4" || item == "f4") return VK_F4;
+	else if (item == "F5" || item == "f5") return VK_F5;
+	else if (item == "F6" || item == "f6") return VK_F6;
+	else if (item == "F7" || item == "f7") return VK_F7;
+	else if (item == "F8" || item == "f8") return VK_F8;
+	else if (item == "F9" || item == "f9") return VK_F9;
+
+	else if (item == "F10" || item == "f10") return VK_F10;
+	else if (item == "F11" || item == "f11") return VK_F11;
+	else if (item == "F12" || item == "f12") return VK_F12;
+	else return 0;
+
+
+
+}
+void LoadHotKeys(char* config)
+{
+
+	int modifiers = 0;
+	int key = 0;
+	std::vector<string> lines;
+	if (read_file_as_lines(config, lines))
+	{
+		string line = lines[0];
+		auto results = split_string(line, "+");
+		for (auto item : results)
+		{
+			modifiers |= GetModifierCode(item);
+			key |= GetKeyCode(item);
+		}
+	}
+	else
+	{
+		jc_append_file(config, "control+alt+shift+r");
+		modifiers = MOD_ALT | MOD_CONTROL | MOD_SHIFT;
+		key = GetKeyCode("R");
+	}
+
+	if (RegisterHotKey(
+		globalHWND,
+		JC_HOTKEY,
+		modifiers,
+		key))
+	{
+
+	}
+	else
+	{
+		jc_error_and_exit(_TEXT("COULDNT REGISTER HOTKEY"));
+	}
+}
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	HICON hMainIcon;
@@ -115,6 +245,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	{
 		return FALSE;
 	}
+	LoadHotKeys(JC_CONFIG_FILE);
+
 	AddClipboardFormatListener(globalHWND);
 	jc_load_history_file();
 
@@ -140,6 +272,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
+	case WM_HOTKEY:
+		callingWindowHWND = GetForegroundWindow();
+		GetCursorPos(&lpClickPoint);
+		hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance);
+		return TRUE;
+		break;
+
 
 	case WM_CLIPBOARDUPDATE: {
 		std::string clip = jc_get_clipboard(hWnd);
@@ -212,6 +351,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (idx >= 0 && idx < JC_CLIPBOARD_HISTORY.size()) {
 				std::string item = JC_CLIPBOARD_HISTORY[idx];
 				jc_set_clipboard(item, hWnd);
+				SetForegroundWindow(callingWindowHWND);
+				EnumChildWindows(callingWindowHWND, EnumChildWinProc, NULL);
+
+
 			}
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
