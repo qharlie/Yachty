@@ -297,12 +297,16 @@ std::string jc_get_clipboard(HWND hWnd)
 
 	if (success) {
 		//{
+
 		HANDLE hClipboardData = GetClipboardData(CF_TEXT);
-		char* pchData = (char*)GlobalLock(hClipboardData);
-		CloseClipboard();
-		GlobalUnlock(hClipboardData);
-		if (pchData)
-			return std::string(pchData);
+		if (hClipboardData) {
+			char* pchData = (char*)GlobalLock(hClipboardData);
+			CloseClipboard();
+			GlobalUnlock(hClipboardData);
+			if (pchData)
+				return std::string(pchData);
+			else return "";
+		}
 		else return "";
 	}
 	else {
