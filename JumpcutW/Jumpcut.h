@@ -25,18 +25,6 @@ const char* JC_APPLICATION_NAME = "JumpcutW_v0.1";
 std::string JC_LAST_CLIPBOARD_ENTRY;
 std::deque<std::string> JC_CLIPBOARD_HISTORY;
 
-string HWNDToString(HWND inputA)
-{
-	string s;
-	int len = GetWindowTextLength(inputA);
-	if (len > 0)
-	{
-		s.resize(len + 1);
-		len = GetWindowTextA(inputA, &s[0], s.size());
-		s.resize(len);
-	}
-	return s;
-}
 // Bail out with an error mesage 
 void jc_error_and_exit(LPTSTR lpszFunction)
 {
@@ -296,7 +284,6 @@ std::string jc_get_clipboard(HWND hWnd)
 	BOOL success = jc_wait_on_clipboard(hWnd);
 
 	if (success) {
-		//{
 
 		HANDLE hClipboardData = GetClipboardData(CF_TEXT);
 		if (hClipboardData) {
@@ -391,19 +378,6 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst)
 	return hPopMenu;
 }
 
-//VOID CALLBACK jc_show_menu_at_current_point(HWND hwnd, UINT message, UINT idTimer, DWORD dwTime) {
-//
-//	RECT rc;
-//	POINT pt;
-//
-//	if (GetCursorPos(&pt))
-//	{
-//		jc_show_popup_menu(pt, hwnd, h;);
-//	}
-//	else jc_log("Failed to GetCursorPos()");
-//}
-
-// Message handler for about box.
 INT_PTR CALLBACK jc_show_about_dialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
@@ -421,6 +395,19 @@ INT_PTR CALLBACK jc_show_about_dialog(HWND hDlg, UINT message, WPARAM wParam, LP
 		break;
 	}
 	return (INT_PTR)FALSE;
+}
+
+string hwnd_to_string(HWND inputA)
+{
+	string s;
+	int len = GetWindowTextLength(inputA);
+	if (len > 0)
+	{
+		s.resize(len + 1);
+		len = GetWindowTextA(inputA, &s[0], s.size());
+		s.resize(len);
+	}
+	return s;
 }
 BOOLEAN jc_is_already_running() {
 	HANDLE hMutex = OpenMutex(MUTEX_ALL_ACCESS, 0, jc_charToCWSTR(JC_APPLICATION_NAME));

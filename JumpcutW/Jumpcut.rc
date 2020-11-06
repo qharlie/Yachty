@@ -48,7 +48,6 @@ LANGUAGE LANG_HEBREW, SUBLANG_DEFAULT
 // remains consistent on all systems.
 IDI_JUMPCUT             ICON                    "Jumpcut.ico"
 
-IDI_SMALL               ICON                    "small.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////

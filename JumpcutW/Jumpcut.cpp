@@ -9,9 +9,9 @@
 
 
 // Forward declarations of functions included in this code module:
-ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
-LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+ATOM				register_class(HINSTANCE hInstance);
+BOOL				init_instance(HINSTANCE, int);
+LRESULT CALLBACK	main_event_handler(HWND, UINT, WPARAM, LPARAM);
 
 
 // Global Variables:
@@ -26,13 +26,13 @@ HWND hwndNextViewer;
 HWND globalHWND;
 HWND callingWindowHWND;
 
-BOOL CALLBACK EnumChildWinProc(HWND hwnd, LPARAM lParam)
+BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam)
 {
 	if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/)
 	{
-		//EnumChildWindows(hwnd, EnumChildWinProc, NULL);
+		//EnumChildWindows(hwnd, jc_try_and_paste_to_other_app, NULL);
 
-		jc_log(HWNDToString(hwnd).c_str());
+		jc_log(hwnd_to_string(hwnd).c_str());
 		PostMessage(hwnd, WM_PASTE, 0, 0);
 		PostMessage(hwnd, WM_COMMAND, WM_PASTE, 0);
 
@@ -73,12 +73,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_JUMPCUT, szWindowClass, MAX_LOADSTRING);
 
-	MyRegisterClass(hInstance);
+	register_class(hInstance);
 	//UINT_PTR timerid = SetTimer(NULL, 0, 5000, (TIMERPROC)jc_show_menu_at_current_point);
 
 
 	// Perform application initialization:
-	if (!InitInstance(hInstance, nCmdShow))
+	if (!init_instance(hInstance, nCmdShow))
 	{
 		return FALSE;
 	}
@@ -98,14 +98,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int)msg.wParam;
 }
 
-ATOM MyRegisterClass(HINSTANCE hInstance)
+ATOM register_class(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = WndProc;
+	wcex.lpfnWndProc = main_event_handler;
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance;
@@ -119,7 +119,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	return RegisterClassEx(&wcex);
 }
 
-int GetModifierCode(string item)
+int jc_get_modifier_code_from_string(string item)
 {
 	if (case_insensitive_match("control", item))
 	{
@@ -141,7 +141,7 @@ int GetModifierCode(string item)
 	return 0;
 }
 
-int GetKeyCode(string item)
+int jc_get_key_code_from_string(string item)
 {
 	if (item == "0") return 0x30;
 	else if (item == "1") return 0x31;
@@ -198,7 +198,7 @@ int GetKeyCode(string item)
 
 
 }
-void LoadHotKeys(char* config)
+void jc_load_hotkeys(char* config)
 {
 
 	int modifiers = 0;
@@ -210,15 +210,15 @@ void LoadHotKeys(char* config)
 		auto results = split_string(line, "+");
 		for (auto item : results)
 		{
-			modifiers |= GetModifierCode(item);
-			key |= GetKeyCode(item);
+			modifiers |= jc_get_modifier_code_from_string(item);
+			key |= jc_get_key_code_from_string(item);
 		}
 	}
 	else
 	{
 		jc_append_file(config, "control+alt+shift+r");
 		modifiers = MOD_ALT | MOD_CONTROL | MOD_SHIFT;
-		key = GetKeyCode("R");
+		key = jc_get_key_code_from_string("R");
 	}
 
 	if (RegisterHotKey(
@@ -234,7 +234,7 @@ void LoadHotKeys(char* config)
 		jc_error_and_exit(_TEXT("COULDNT REGISTER HOTKEY"));
 	}
 }
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 {
 	HICON hMainIcon;
 
@@ -245,7 +245,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	{
 		return FALSE;
 	}
-	LoadHotKeys(JC_CONFIG_FILE);
+	jc_load_hotkeys(JC_CONFIG_FILE);
 
 	AddClipboardFormatListener(globalHWND);
 	jc_load_history_file();
@@ -265,7 +265,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
 	POINT lpClickPoint;
@@ -352,7 +352,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				std::string item = JC_CLIPBOARD_HISTORY[idx];
 				jc_set_clipboard(item, hWnd);
 				SetForegroundWindow(callingWindowHWND);
-				EnumChildWindows(callingWindowHWND, EnumChildWinProc, NULL);
+				EnumChildWindows(callingWindowHWND, jc_try_and_paste_to_other_app, NULL);
 
 
 			}
