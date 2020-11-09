@@ -175,7 +175,6 @@ BOOL jc_wait_on_clipboard(HWND hWnd, int maxRetryCount = JC_MAX_RETRY_COUNT)
 		i += 1;
 		if (i >= maxRetryCount)
 		{
-			jc_error_and_exit(jc_charToCWSTR("CLIPBOARD_READ_FAILED, now bailing out."));
 			break;
 		}
 		else {
@@ -206,7 +205,6 @@ void jc_set_clipboard(std::string item, HWND hWnd)
 		SetClipboardData(CF_TEXT, clipbuffer);
 		CloseClipboard();
 	}
-	else jc_error_and_exit(TEXT("SET_CLIPBOARD"));
 }
 
 void jc_append_file(const char* fileName, const char* message, bool shouldReplaceNewLines = false)
@@ -297,7 +295,6 @@ std::string jc_get_clipboard(HWND hWnd)
 		else return "";
 	}
 	else {
-		jc_error_and_exit(TEXT("ERROR ACCESS DENIED TO OPENCLIPBOARD"));
 		return std::string("");
 	}
 
@@ -366,14 +363,13 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst)
 		LR_DEFAULTCOLOR);
 	MENUITEMINFO mii = { 0 };
 	mii.cbSize = sizeof(mii);
-	if (!GetMenuItemInfo(hPopMenu, IDM_ABOUT, false, &mii)) {
-		jc_error_and_exit(TEXT("getMenuItemInfo"));
-	}
-	mii.fMask |= MIIM_BITMAP;
-	mii.hbmpItem = hBitmap;
-	mii.fType = MIIM_BITMAP;
-	if (!SetMenuItemInfo(hPopMenu, IDM_ABOUT, false, &mii)) { jc_alert("FAILED"); }
+	if (GetMenuItemInfo(hPopMenu, IDM_ABOUT, false, &mii)) {
 
+		mii.fMask |= MIIM_BITMAP;
+		mii.hbmpItem = hBitmap;
+		mii.fType = MIIM_BITMAP;
+		if (!SetMenuItemInfo(hPopMenu, IDM_ABOUT, false, &mii)) {}
+	}
 	TrackPopupMenu(hPopMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_BOTTOMALIGN, lpClickPoint.x, lpClickPoint.y, 0, hWnd, NULL);
 	return hPopMenu;
 }

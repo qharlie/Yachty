@@ -8,7 +8,7 @@
 #define JC_HOTKEY 9000
 
 
-// Forward declarations of functions included in this code module:
+// Forward declarations
 ATOM				register_class(HINSTANCE hInstance);
 BOOL				init_instance(HINSTANCE, int);
 LRESULT CALLBACK	main_event_handler(HWND, UINT, WPARAM, LPARAM);
@@ -26,20 +26,7 @@ HWND hwndNextViewer;
 HWND globalHWND;
 HWND callingWindowHWND;
 
-BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam)
-{
-	if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/)
-	{
-		//EnumChildWindows(hwnd, jc_try_and_paste_to_other_app, NULL);
 
-		jc_log(hwnd_to_string(hwnd).c_str());
-		PostMessage(hwnd, WM_PASTE, 0, 0);
-		PostMessage(hwnd, WM_COMMAND, WM_PASTE, 0);
-
-	}
-	return TRUE;
-
-}
 // main entry point 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -267,6 +254,20 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 }
 
 
+BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam)
+{
+	if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/)
+	{
+		//EnumChildWindows(hwnd, jc_try_and_paste_to_other_app, NULL);
+
+		jc_log(hwnd_to_string(hwnd).c_str());
+		PostMessage(hwnd, WM_PASTE, 0, 0);
+		PostMessage(hwnd, WM_COMMAND, WM_PASTE, 0);
+
+	}
+	return TRUE;
+
+}
 LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
@@ -304,7 +305,6 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			}
 			else jc_log("Skipping Duplicate");
 		}
-		else jc_error_and_exit(TEXT("ERROR ACCESS DENIED TO OPENCLIPBOARD, PLEASE REPORT THIS!"));
 
 		break;
 	}
