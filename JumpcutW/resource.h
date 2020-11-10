@@ -8,12 +8,15 @@
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
 #define IDS_APPTOOLTIP                  104
+#define IDD_RSEARCH                     104
 #define IDM_EXIT                        105
 #define IDI_JUMPCUT                     107
 #define IDI_SMALL                       108
 #define IDC_JUMPCUT                     109
 #define IDR_MAINFRAME                   128
 #define IDB_PNG1                        129
+#define IDC_COMBO1                      1000
+#define IDC_SEARCH_RESULTS              1000
 #define ID_S_                           32771
 #define ID_S_EXIT                       32772
 #define ID_SYSTRAYMENU_                 32773
@@ -36,7 +39,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32784
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

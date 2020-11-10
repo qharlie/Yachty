@@ -15,29 +15,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// English resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// PNG
-//
-
-IDB_PNG1                PNG                     "docicon.png"
-
-#endif    // English (United States) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Hebrew (Israel) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HEB)
-LANGUAGE LANG_HEBREW, SUBLANG_DEFAULT
-#pragma code_page(1255)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -47,7 +29,6 @@ LANGUAGE LANG_HEBREW, SUBLANG_DEFAULT
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_JUMPCUT             ICON                    "Jumpcut.ico"
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -95,6 +76,74 @@ BEGIN
     LTEXT           "JumpcutW is licensed uner the MIT License by Charles Sanders.",IDC_STATIC,9,108,137,18,SS_NOPREFIX
 END
 
+IDD_RSEARCH DIALOGEX 22, 17, 183, 18
+STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "Clipboard History Search"
+FONT 12, "Verdana", 400, 0, 0x0
+BEGIN
+    COMBOBOX        IDC_SEARCH_RESULTS,1,4,181,227,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+    END
+
+    IDD_RSEARCH, DIALOG
+    BEGIN
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_APP_TITLE           "JUMPCUT"
+    IDS_APPTOOLTIP          "Jumpcut"
+    IDC_JUMPCUT             "JUMPCUT"
+END
+
+#endif    // English resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "docicon.png"
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Hebrew (Israel) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HEB)
+LANGUAGE LANG_HEBREW, SUBLANG_DEFAULT
+#pragma code_page(1255)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -122,34 +171,6 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
-BEGIN
-    IDD_ABOUTBOX, DIALOG
-    BEGIN
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE
-BEGIN
-    IDS_APP_TITLE           "JUMPCUT"
-    IDS_APPTOOLTIP          "Jumpcut"
-    IDC_JUMPCUT             "JUMPCUT"
-END
 
 #endif    // Hebrew (Israel) resources
 /////////////////////////////////////////////////////////////////////////////

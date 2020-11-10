@@ -7,12 +7,10 @@
 #define	WM_USER_SHELLICON WM_USER + 1
 #define JC_HOTKEY 9000
 
-
 // Forward declarations
 ATOM				register_class(HINSTANCE hInstance);
 BOOL				init_instance(HINSTANCE, int);
 LRESULT CALLBACK	main_event_handler(HWND, UINT, WPARAM, LPARAM);
-
 
 // Global Variables:
 HINSTANCE globalInstance;	// current instance
@@ -195,12 +193,11 @@ void jc_load_hotkeys(char* config)
 	std::vector<string> lines;
 	if (read_file_as_lines(config, lines))
 	{
-		string line = lines[0];
-		auto results = split_string(line, "+");
+		auto results = split_string(lines[0], "+");
 		for (auto item : results)
 		{
-			modifiers |= jc_get_modifier_code_from_string(item);
-			key |= jc_get_key_code_from_string(item);
+			modifiers |= jc_get_modifier_code_from_string(trim(item));
+			key |= jc_get_key_code_from_string(trim(item));
 		}
 	}
 	else
@@ -210,17 +207,12 @@ void jc_load_hotkeys(char* config)
 		key = jc_get_key_code_from_string("R");
 	}
 
-	if (RegisterHotKey(
+	if (!RegisterHotKey(
 		globalHWND,
 		JC_HOTKEY,
 		modifiers,
-		key))
-	{
-
-	}
-	else
-	{
-		jc_error_and_exit(_TEXT("COULDNT REGISTER HOTKEY"));
+		key)) {
+		jc_error_and_exit(_TEXT("COULDNT REGISTER HOTKEY, ASSUMING FATAL ERROR AND BAILING OUT."));
 	}
 }
 BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
@@ -268,6 +260,8 @@ BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam)
 	return TRUE;
 
 }
+
+
 LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
@@ -278,7 +272,7 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	case WM_HOTKEY:
 		callingWindowHWND = GetForegroundWindow();
 		GetCursorPos(&lpClickPoint);
-		hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance);
+		hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance, false);
 		return TRUE;
 		break;
 
@@ -329,7 +323,7 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 			GetCursorPos(&lpClickPoint);
-			hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance);
+			hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance, true);
 			return TRUE;
 		}
 		break;
@@ -341,6 +335,9 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		{
 		case IDM_ABOUT:
 			DialogBox(globalInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, jc_show_about_dialog);
+			break;
+		case IDM_RSEARCH:
+			DialogBox(globalInstance, MAKEINTRESOURCE(IDD_RSEARCH), hWnd, jc_show_rsearch_dialog);
 			break;
 		case IDM_EXIT:
 			Shell_NotifyIcon(NIM_DELETE, &nidApp);

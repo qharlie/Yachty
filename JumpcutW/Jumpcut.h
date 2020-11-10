@@ -9,6 +9,11 @@
 #include <deque>
 #include <synchapi.h>
 #include <WinUser.h>
+#include <commctrl.h>
+
+#define IDM_RSEARCH 201
+
+
 using namespace std;
 
 // Globals and constants 
@@ -20,7 +25,7 @@ const int JC_MAX_MENU_LABEL_LENGTH = 65;
 const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
 const char* JS_WHITESPACE = " \t\n\r\f\v";
 const UINT JC_MAX_RETRY_COUNT = 5;
-const UINT JC_MAX_HISTORY_SIZE = 50;
+const UINT JC_MAX_HISTORY_SIZE = 40;
 const char* JC_APPLICATION_NAME = "JumpcutW_v0.1";
 std::string JC_LAST_CLIPBOARD_ENTRY;
 std::deque<std::string> JC_CLIPBOARD_HISTORY;
@@ -330,7 +335,7 @@ VOID jc_start_external_application(LPCTSTR lpApplicationName)
 }
 
 
-HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst)
+HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, bool showControls)
 {
 	UINT uFlag = MF_BYPOSITION | MF_STRING;
 	//GetCursorPos(&lpClickPoint);
@@ -348,11 +353,17 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst)
 		if (!item.empty())
 			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, i + BASE, jc_charToCWSTR(label.c_str()));
 	}
-	if (JC_CLIPBOARD_HISTORY.size() > 0)
-		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
-	InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
-	InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
 
+	if (showControls) {
+		if (JC_CLIPBOARD_HISTORY.size() > 0)
+			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
+
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_RSEARCH, _T("Search"));
+
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
+
+	}
 	SetForegroundWindow(hWnd);
 
 	HBITMAP hBitmap = (HBITMAP)LoadImage(inst,
@@ -380,6 +391,46 @@ INT_PTR CALLBACK jc_show_about_dialog(HWND hDlg, UINT message, WPARAM wParam, LP
 	switch (message)
 	{
 	case WM_INITDIALOG:
+		return (INT_PTR)TRUE;
+
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
+}
+void center_window(HWND hWnd)
+{
+	RECT rc;
+
+	GetWindowRect(hWnd, &rc);
+
+	int xPos = (GetSystemMetrics(SM_CXSCREEN) - rc.right) / 2;
+	int yPos = (GetSystemMetrics(SM_CYSCREEN) - rc.bottom) / 2;
+
+	SetWindowPos(hWnd, 0, xPos, yPos, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+}
+INT_PTR CALLBACK jc_show_rsearch_dialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	UNREFERENCED_PARAMETER(lParam);
+	HWND hSearchResults;
+
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		center_window(hDlg);
+		hSearchResults = GetDlgItem(hDlg, IDC_SEARCH_RESULTS);
+		if (hSearchResults != NULL) {
+			for (auto str : JC_CLIPBOARD_HISTORY)
+			{
+				SendMessage(hSearchResults, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(jc_charToCWSTR(str.c_str())));
+			}
+		}
+		SendMessage(hSearchResults, CB_SETMINVISIBLE, (WPARAM)45, 0);
 		return (INT_PTR)TRUE;
 
 	case WM_COMMAND:
