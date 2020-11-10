@@ -142,13 +142,13 @@ std::string jc_CWSTRToString(const wchar_t* charArray) {
 }
 
 template <typename T>
-void moveItemToBack(std::deque<T>& v, size_t itemIndex) {
+void move_item_to_tail(std::deque<T>& v, size_t itemIndex) {
 	auto it = v.begin() + itemIndex;
 	std::rotate(it, it + 1, v.end());
 }
 
 template < typename T>
-std::pair<bool, int > findInCollection(const std::deque<T>& vecOfElements, const T& element) {
+std::pair<bool, int > find_in_collection(const std::deque<T>& vecOfElements, const T& element) {
 	std::pair<bool, int > result;
 	auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
 	if (it != vecOfElements.end())

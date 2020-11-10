@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_477AA8CE00F845D288B85994594A2C50"
+        "MsmKey" = "8:_F94E945C231C4AC49CCCBAAFF64A7DB7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -91,17 +91,17 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_8FC69FA731184EADB1EB7B2513E61F99"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_1A47FBF2F6064C9C9D8417D5715E60AB"
             {
             "Name" = "8:Primary Output from JumpcutW (Active)"
             "Condition" = "8:"
-            "Object" = "8:_477AA8CE00F845D288B85994594A2C50"
+            "Object" = "8:_F94E945C231C4AC49CCCBAAFF64A7DB7"
             "FileType" = "3:2"
             "InstallAction" = "3:2"
-            "Arguments" = "8:INSTALL"
+            "Arguments" = "8:/Commit"
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
-            "Identifier" = "8:_DCF12075_4520_4B66_9415_3728AB7D1D8B"
+            "Identifier" = "8:_A4ACB20B_C7E5_4F37_A173_7A410CB25D87"
             "InstallerClass" = "11:FALSE"
             "CustomActionData" = "8:"
             }
@@ -116,6 +116,14 @@
         {
             "LaunchCondition"
             {
+                "{A06ECF26-33A3-4562-8140-9B0E340D4F24}:_E50FCF5634DF45C09AB9EF8C9D0EADD8"
+                {
+                "Name" = "8:.NET Framework"
+                "Message" = "8:[VSDNETMSG]"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.7.2"
+                "AllowLaterVersions" = "11:FALSE"
+                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=863262"
+                }
             }
         }
         "File"
@@ -308,7 +316,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_23AB09DA416C4AC3907990B65236D105"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_49B31D2C4B704530A044034146417AA4"
             {
             "Name" = "8:Shortcut to Primary Output from JumpcutW (Active)"
             "Arguments" = "8:"
@@ -316,22 +324,8 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_477AA8CE00F845D288B85994594A2C50"
+            "Target" = "8:_F94E945C231C4AC49CCCBAAFF64A7DB7"
             "Folder" = "8:_37B9FE75612F4F87987DC2B0AA0270F1"
-            "WorkingFolder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C6D9B3AB6E574F21A14BA4069AD547AC"
-            {
-            "Name" = "8:Shortcut to Primary Output from JumpcutW (Active)"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_477AA8CE00F845D288B85994594A2C50"
-            "Folder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
             "WorkingFolder" = "8:_28FCD4EEE7F8455187EC58C47471A1F5"
             "Icon" = "8:"
             "Feature" = "8:"
@@ -735,7 +729,7 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_477AA8CE00F845D288B85994594A2C50"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F94E945C231C4AC49CCCBAAFF64A7DB7"
             {
             "SourcePath" = "8:..\\x64\\Release\\JumpcutW.exe"
             "TargetName" = "8:"

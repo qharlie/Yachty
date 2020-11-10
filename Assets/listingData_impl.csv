@@ -1,29 +1,29 @@
 Field,ID,Type (Type),default,en-us
-Description,2,Text,,A clipboard history tool with an intuitive interface and global hot key for quick access to your clipboard history.
-ReleaseNotes,3,Text,,"Initial release, added support for custom global host key in ~/.jc_config.txt "
-Title,4,Text,,Jumpcut
-ShortTitle,5,Text,,Jumpcut
-SortTitle,6,Text,,jumpcut
-VoiceTitle,7,Text,,Jumpcut
-ShortDescription,8,Text,,A clipboard history tool with an intuitive interface.
-DevStudio,9,Text,,TheCharlieCompany
-CopyrightTrademarkInformation,12,Text,,TheCharlieCompany
-AdditionalLicenseTerms,13,Text,,AGPL
-DesktopScreenshot1,100,Relative path (or URL to file in Partner Center),,
-DesktopScreenshot2,101,Relative path (or URL to file in Partner Center),,
-DesktopScreenshot3,102,Relative path (or URL to file in Partner Center),,
-DesktopScreenshot4,103,Relative path (or URL to file in Partner Center),,
-DesktopScreenshot5,104,Relative path (or URL to file in Partner Center),,
+Description,2,Text,A clipboard history tool with an intuitive interface and global hot key for quick access to your clipboard history.,
+ReleaseNotes,3,Text,"Initial release, added support for custom global host key in ~/.jc_config.txt ",
+Title,4,Text,Jumpcut,
+ShortTitle,5,Text,Jumpcut,
+SortTitle,6,Text,jumpcut,
+VoiceTitle,7,Text,Jumpcut,
+ShortDescription,8,Text,A clipboard history tool with an intuitive interface.,
+DevStudio,9,Text,TheCharlieCompany,
+CopyrightTrademarkInformation,12,Text,TheCharlieCompany,
+AdditionalLicenseTerms,13,Text,AGPL,
+DesktopScreenshot1,100,Relative path (or URL to file in Partner Center),Assets/screenshot1.png,
+DesktopScreenshot2,101,Relative path (or URL to file in Partner Center),Assets/screenshot2.png,
+DesktopScreenshot3,102,Relative path (or URL to file in Partner Center),Assets/screenshot3.png,
+DesktopScreenshot4,103,Relative path (or URL to file in Partner Center),Assets/screenshot4.png,
+DesktopScreenshot5,104,Relative path (or URL to file in Partner Center),Assets/screenshot5.png,
 DesktopScreenshot6,105,Relative path (or URL to file in Partner Center),,
 DesktopScreenshot7,106,Relative path (or URL to file in Partner Center),,
 DesktopScreenshot8,107,Relative path (or URL to file in Partner Center),,
 DesktopScreenshot9,108,Relative path (or URL to file in Partner Center),,
 DesktopScreenshot10,109,Relative path (or URL to file in Partner Center),,
-DesktopScreenshotCaption1,150,Text,,Menu access
-DesktopScreenshotCaption2,151,Text,,Menu access
-DesktopScreenshotCaption3,152,Text,,Global Hot Key access
-DesktopScreenshotCaption4,153,Text,,Global Hot Key access
-DesktopScreenshotCaption5,154,Text,,Configuration 
+DesktopScreenshotCaption1,150,Text,Menu access,
+DesktopScreenshotCaption2,151,Text,Menu access,
+DesktopScreenshotCaption3,152,Text,Global Hot Key access,
+DesktopScreenshotCaption4,153,Text,Global Hot Key access,
+DesktopScreenshotCaption5,154,Text,Configuration ,
 DesktopScreenshotCaption6,155,Text,,
 DesktopScreenshotCaption7,156,Text,,
 DesktopScreenshotCaption8,157,Text,,
@@ -92,7 +92,7 @@ HolographicScreenshotCaption10,459,Text,,
 StoreLogo720x1080,600,Relative path (or URL to file in Partner Center),,
 StoreLogo1080x1080,601,Relative path (or URL to file in Partner Center),,
 StoreLogo300x300,602,Relative path (or URL to file in Partner Center),,
-OverrideLogosForWin10,603,True/False,,False
+OverrideLogosForWin10,603,True/False,False,
 StoreLogoOverride150x150,604,Relative path (or URL to file in Partner Center),,
 StoreLogoOverride71x71,605,Relative path (or URL to file in Partner Center),,
 PromoImage1920x1080,606,Relative path (or URL to file in Partner Center),,
@@ -145,10 +145,10 @@ RecommendedHardwareReq8,857,Text,,
 RecommendedHardwareReq9,858,Text,,
 RecommendedHardwareReq10,859,Text,,
 RecommendedHardwareReq11,860,Text,,
-SearchTerm1,900,Text,,clipboard history
-SearchTerm2,901,Text,,multi clipboard
-SearchTerm3,902,Text,,cut and paste history
-SearchTerm4,903,Text,,clipboards
+SearchTerm1,900,Text,clipboard history,
+SearchTerm2,901,Text,multi clipboard,
+SearchTerm3,902,Text,cut and paste history,
+SearchTerm4,903,Text,clipboards,
 SearchTerm5,904,Text,,
 SearchTerm6,905,Text,,
 SearchTerm7,906,Text,,
