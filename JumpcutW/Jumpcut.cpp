@@ -29,10 +29,11 @@ HWND callingWindowHWND;
 int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
-	int       nCmdShow)
-{
+	int       nCmdShow) {
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
 	sprintf(JC_LOG_FILE, "%s\\.jc_log.txt", JC_USERS_HOME_DIRECTORY);
 	sprintf(JC_HISTORY_FILE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
 	sprintf(JC_CONFIG_FILE, "%s\\.jc_config.txt", JC_USERS_HOME_DIRECTORY);
@@ -40,8 +41,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	globalInstance = hInstance;
 	LPWSTR* szArgList;
 	int argCount;
-	char buffer[500];
-
+	
 	szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
 	// This is for spawning a clone of this app on install, otherwise the installer hangs
 	if (argCount == 2) { // And argv[1] == 'INSTALL'	
@@ -80,8 +80,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int)msg.wParam;
 }
 
-ATOM register_class(HINSTANCE hInstance)
-{
+ATOM register_class(HINSTANCE hInstance) {
 	WNDCLASSEX wcex;
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -103,28 +102,16 @@ ATOM register_class(HINSTANCE hInstance)
 
 int jc_get_modifier_code_from_string(string item)
 {
-	if (case_insensitive_match("control", item))
-	{
-		return MOD_CONTROL;
-	}
-	else if (case_insensitive_match("shift", item))
-	{
-		return MOD_SHIFT;
-	}
-	else if (case_insensitive_match("alt", item))
-	{
-		return MOD_ALT;
-	}
-	else if (case_insensitive_match("windows", item))
-	{
-		return MOD_WIN;
-	}
+	if (case_insensitive_match("control", item)) return MOD_CONTROL;
+	else if (case_insensitive_match("shift", item)) return MOD_SHIFT;
+	else if (case_insensitive_match("alt", item)) return MOD_ALT;
+	else if (case_insensitive_match("windows", item)) return MOD_WIN;
 	else jc_log(std::string("Couldnt recognize key code " + item).c_str());
 	return 0;
+
 }
 
-int jc_get_key_code_from_string(string item)
-{
+int jc_get_key_code_from_string(string item) {
 	if (item == "0") return 0x30;
 	else if (item == "1") return 0x31;
 	else if (item == "2") return 0x32;
@@ -182,8 +169,7 @@ int jc_get_key_code_from_string(string item)
 }
 
 
-void jc_load_hotkeys(char* config)
-{
+void jc_load_hotkeys(char* config) {
 
 	int modifiers = 0;
 	int key = 0;
@@ -204,11 +190,7 @@ void jc_load_hotkeys(char* config)
 		key = jc_get_key_code_from_string("R");
 	}
 
-	if (!RegisterHotKey(
-		globalHWND,
-		JC_HOTKEY,
-		modifiers,
-		key)) jc_error_and_exit(_TEXT("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it."));
+	if (!RegisterHotKey(globalHWND, JC_HOTKEY, modifiers, key)) jc_error_and_exit(_TEXT("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it."));
 
 }
 BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
@@ -218,10 +200,8 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 	globalHWND = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-	if (!globalHWND)
-	{
-		return FALSE;
-	}
+	if (!globalHWND) return FALSE;
+
 	jc_load_hotkeys(JC_CONFIG_FILE);
 
 	AddClipboardFormatListener(globalHWND);
@@ -230,10 +210,10 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 	hMainIcon = LoadIcon(hInstance, (LPCTSTR)MAKEINTRESOURCE(IDI_JUMPCUT));
 
 	nidApp.cbSize = sizeof(NOTIFYICONDATA);
-	nidApp.hWnd = (HWND)globalHWND;              
-	nidApp.uID = IDI_JUMPCUT;           
-	nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP; 
-	nidApp.hIcon = hMainIcon; 
+	nidApp.hWnd = (HWND)globalHWND;
+	nidApp.uID = IDI_JUMPCUT;
+	nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+	nidApp.hIcon = hMainIcon;
 	nidApp.uCallbackMessage = WM_USER_SHELLICON;
 	LoadString(hInstance, IDS_APPTOOLTIP, nidApp.szTip, MAX_LOADSTRING);
 	Shell_NotifyIcon(NIM_ADD, &nidApp);
@@ -246,15 +226,11 @@ BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam)
 {
 	if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/)
 	{
-		//EnumChildWindows(hwnd, jc_try_and_paste_to_other_app, NULL);
-
 		jc_log(hwnd_to_string(hwnd).c_str());
 		PostMessage(hwnd, WM_PASTE, 0, 0);
 		PostMessage(hwnd, WM_COMMAND, WM_PASTE, 0);
-
 	}
 	return TRUE;
-
 }
 
 
@@ -271,8 +247,6 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance, false);
 		return TRUE;
 		break;
-
-
 	case WM_CLIPBOARDUPDATE: {
 		std::string clip = jc_get_clipboard(hWnd);
 		if (!clip.empty())
@@ -280,9 +254,7 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			if (clip != JC_LAST_CLIPBOARD_ENTRY)
 			{
 				std::pair<bool, int> result = find_in_collection(JC_CLIPBOARD_HISTORY, clip);
-				if (result.first) {
-					move_item_to_tail(JC_CLIPBOARD_HISTORY, result.second);
-				}
+				if (result.first) move_item_to_tail(JC_CLIPBOARD_HISTORY, result.second);
 				else {
 					if (JC_CLIPBOARD_HISTORY.size() + 1 > JC_MAX_HISTORY_SIZE) {
 						JC_CLIPBOARD_HISTORY.pop_front();
@@ -295,10 +267,8 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			}
 			else jc_log("Skipping Duplicate");
 		}
-
 		break;
 	}
-
 	case WM_DESTROY:
 		ChangeClipboardChain(hWnd, hwndNextViewer);
 		PostQuitMessage(0);
@@ -307,7 +277,6 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		hwndNextViewer = SetClipboardViewer(hWnd);
 		break;
 	case WM_USER_SHELLICON:
-		// systray msg callback 
 		switch (LOWORD(lParam))
 		{
 		case WM_LBUTTONDOWN:
@@ -335,22 +304,17 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			break;
 		default: {
 
-			int BASE = 2000;
-			int idx = wmId - BASE;
+			int idx = wmId - JC_MENU_ID_BASE;
 			if (idx >= 0 && idx < JC_CLIPBOARD_HISTORY.size()) {
 				std::string item = JC_CLIPBOARD_HISTORY[idx];
 				jc_set_clipboard(item, hWnd);
 				SetForegroundWindow(callingWindowHWND);
 				EnumChildWindows(callingWindowHWND, jc_try_and_paste_to_other_app, NULL);
-
-
 			}
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		}
 		break;
-
-
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

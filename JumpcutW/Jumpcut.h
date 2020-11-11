@@ -26,13 +26,14 @@ const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
 const char* JS_WHITESPACE = " \t\n\r\f\v";
 const UINT JC_MAX_RETRY_COUNT = 5;
 const UINT JC_MAX_HISTORY_SIZE = 40;
+const int JC_MENU_ID_BASE = 2000;
 const char* JC_APPLICATION_NAME = "JumpcutW_v0.1";
+
 std::string JC_LAST_CLIPBOARD_ENTRY;
 std::deque<std::string> JC_CLIPBOARD_HISTORY;
 
 // Bail out with an error mesage 
-void jc_error_and_exit(LPTSTR lpszFunction)
-{
+void jc_error_and_exit(LPTSTR lpszFunction) {
 	DWORD dw = GetLastError();
 
 	// Retrieve the system error message for the last-error code
@@ -76,8 +77,7 @@ bool case_insensitive_match(string s1, string s2) {
 }
 
 std::vector<std::string> split_string(const std::string& str,
-	const std::string& delimiter)
-{
+	const std::string& delimiter) {
 	std::vector<std::string> strings;
 
 	std::string::size_type pos = 0;
@@ -173,28 +173,22 @@ std::pair<bool, int > find_in_collection(const std::deque<T>& vecOfElements, con
 BOOL jc_wait_on_clipboard(HWND hWnd, int maxRetryCount = JC_MAX_RETRY_COUNT)
 {
 	BOOL success = false;
-	int i = 0;
+	int counter = 0;
 	success = OpenClipboard(hWnd);
 	while (!success)
 	{
-		i += 1;
-		if (i >= maxRetryCount)
-		{
-			break;
-		}
-		else {
-			Sleep(250);
-		}
+		counter += 1;
+		if (counter >= maxRetryCount) break;
+		else Sleep(250);
+
 		success = OpenClipboard(hWnd);
 	}
 	return success;
 }
 
 
-void jc_alert(std::string item)
-{
-	MessageBox(NULL, jc_charToCWSTR(item.c_str()), _T("Alert"), MB_OK);
-}
+void jc_alert(std::string item) { MessageBox(NULL, jc_charToCWSTR(item.c_str()), _T("Alert"), MB_OK); }
+
 void jc_set_clipboard(std::string item, HWND hWnd)
 {
 	BOOL success = jc_wait_on_clipboard(hWnd);
@@ -227,43 +221,27 @@ void jc_append_file(const char* fileName, const char* message, bool shouldReplac
 
 }
 
-void jc_log(const char* msg)
-{
-	jc_append_file(JC_LOG_FILE, msg);
-}
+void jc_log(const char* msg) { jc_append_file(JC_LOG_FILE, msg); }
+void jc_history(const char* msg) { jc_append_file(JC_HISTORY_FILE, msg, true); }
 
-
-void jc_history(const char* msg)
-{
-	jc_append_file(JC_HISTORY_FILE, msg, true);
-}
-
-bool read_file_as_lines(std::string fileName, std::vector<std::string>& vecOfStrs)
-{
-	// Open the File
+bool read_file_as_lines(std::string fileName, std::vector<std::string>& vecOfStrs) {
 	std::ifstream in(fileName.c_str());
-	// Check if object is valid
-	if (!in)
-	{
-		std::cerr << "Cannot open the File : " << fileName << std::endl;
-		return false;
-	}
+	if (!in) return false;
+
 	std::string str;
-	// Read the next line from File untill it reaches the end.
 	while (std::getline(in, str))
 	{
-		// Line contains string of length > 0 then save it in vector
-		if (str.size() > 0)
-			vecOfStrs.push_back(str);
+		if (str.size() > 0) vecOfStrs.push_back(str);
 	}
 	//Close The File
 	in.close();
 	return true;
 }
+
 void jc_load_history_file() {
 	std::vector<string> lines;
 	JC_CLIPBOARD_HISTORY.clear();
-	//JC_CLIPBOARD_HISTORY.
+
 	if (read_file_as_lines(JC_HISTORY_FILE, lines))
 	{
 		int start_index = max(0, lines.size() - 50);
@@ -277,19 +255,17 @@ void jc_load_history_file() {
 				JC_CLIPBOARD_HISTORY.push_back(clip);
 			}
 		}
-
 	}
-
 }
 
-std::string jc_get_clipboard(HWND hWnd)
-{
+std::string jc_get_clipboard(HWND hWnd) {
+
 	BOOL success = jc_wait_on_clipboard(hWnd);
+	string ret = "";
 
 	if (success) {
 
 		HANDLE hClipboardData = GetClipboardData(CF_TEXT);
-		string ret = "";
 		if (hClipboardData) {
 			char* pchData = (char*)GlobalLock(hClipboardData);
 			CloseClipboard();
@@ -304,12 +280,11 @@ std::string jc_get_clipboard(HWND hWnd)
 			catch (exception e) {}
 
 		}
-		return ret;
 	}
 	else {
 		jc_log(std::string("Couldnt handle to clipboard after " + std::to_string(JC_MAX_RETRY_COUNT) + " tries").c_str());
-		return std::string("");
 	}
+	return ret;
 
 }
 
@@ -343,12 +318,9 @@ VOID jc_start_external_application(LPCTSTR lpApplicationName)
 }
 
 
-HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, bool showControls)
-{
+HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, bool showControls) {
 	UINT uFlag = MF_BYPOSITION | MF_STRING;
-	//GetCursorPos(&lpClickPoint);
 	HMENU hPopMenu = CreatePopupMenu();
-	int BASE = 2000;
 	for (int i = 0; i < JC_CLIPBOARD_HISTORY.size(); i++)
 	{
 		std::string item = JC_CLIPBOARD_HISTORY[i];
@@ -359,7 +331,7 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 			label += "...";
 		}
 		if (!item.empty())
-			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, i + BASE, jc_charToCWSTR(label.c_str()));
+			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, i + JC_MENU_ID_BASE, jc_charToCWSTR(label.c_str()));
 	}
 
 	if (showControls) {
@@ -367,7 +339,7 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
 
 		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
-		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_RSEARCH, _T("Search"));
+		//InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_RSEARCH, _T("Search"));
 
 		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
 
