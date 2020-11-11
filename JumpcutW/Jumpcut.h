@@ -31,8 +31,8 @@ const UINT  JC_MAX_HISTORY_SIZE = 40;
 const int   JC_MENU_ID_BASE = 2000;
 const char* JC_APPLICATION_NAME = "JumpcutW_v0.1";
 
-std::string             JC_LAST_CLIPBOARD_ENTRY;
-std::deque<std::string> JC_CLIPBOARD_HISTORY;
+string             JC_LAST_CLIPBOARD_ENTRY;
+deque<string> JC_CLIPBOARD_HISTORY;
 
 // Bail out with an error mesage 
 void jc_error_and_exit(LPTSTR lpszFunction) {
@@ -78,13 +78,13 @@ bool case_insensitive_match(string s1, string s2) {
 	return 0; //not matched
 }
 
-std::vector<std::string> split_string(const std::string& str,
-	const std::string& delimiter) {
-	std::vector<std::string> strings;
+vector<string> split_string(const string& str,
+	const string& delimiter) {
+	vector<string> strings;
 
-	std::string::size_type pos = 0;
-	std::string::size_type prev = 0;
-	while ((pos = str.find(delimiter, prev)) != std::string::npos)
+	string::size_type pos = 0;
+	string::size_type prev = 0;
+	while ((pos = str.find(delimiter, prev)) != string::npos)
 	{
 		strings.push_back(str.substr(prev, pos - prev));
 		prev = pos + delimiter.size();
@@ -95,36 +95,36 @@ std::vector<std::string> split_string(const std::string& str,
 
 	return strings;
 }
-bool replace(std::string& str, const std::string& from, const std::string& to) {
+bool replace(string& str, const string& from, const string& to) {
 	size_t start_pos = str.find(from);
-	if (start_pos == std::string::npos)
+	if (start_pos == string::npos)
 		return false;
 	str.replace(start_pos, from.length(), to);
 	return true;
 }
-void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+void replaceAll(string& str, const string& from, const string& to) {
 	if (from.empty())
 		return;
 	size_t start_pos = 0;
-	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+	while ((start_pos = str.find(from, start_pos)) != string::npos) {
 		str.replace(start_pos, from.length(), to);
 		start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
 	}
 }
 // trim from end of string (right)
-inline std::string& rtrim(std::string& s, const char* t = JS_WHITESPACE) {
+inline string& rtrim(string& s, const char* t = JS_WHITESPACE) {
 	s.erase(s.find_last_not_of(t) + 1);
 	return s;
 }
 
 // trim from beginning of string (left)
-inline std::string& ltrim(std::string& s, const char* t = JS_WHITESPACE) {
+inline string& ltrim(string& s, const char* t = JS_WHITESPACE) {
 	s.erase(0, s.find_first_not_of(t));
 	return s;
 }
 
 // trim from both ends of string (right then left)
-inline std::string& trim(std::string& s, const char* t = JS_WHITESPACE) {
+inline string& trim(string& s, const char* t = JS_WHITESPACE) {
 	return ltrim(rtrim(s, t), t);
 }
 
@@ -136,28 +136,28 @@ wchar_t* jc_charToCWSTR(const char* charArray) {
 	return wString;
 }
 // Convert from wide char 
-std::string jc_CWSTRToString(const wchar_t* charArray) {
+string jc_CWSTRToString(const wchar_t* charArray) {
 
 	int len = wcslen(charArray);
 	char* str = new char[len + 1];
 	memset(str, 0, len);
 	wcstombs(str, charArray, len + 1);
-	std::string ret = std::string(str);
+	string ret = string(str);
 	delete str;
 
 	return ret;
 }
 
 template <typename T>
-void move_item_to_tail(std::deque<T>& v, size_t itemIndex) {
+void move_item_to_tail(deque<T>& v, size_t itemIndex) {
 	auto it = v.begin() + itemIndex;
-	std::rotate(it, it + 1, v.end());
+	rotate(it, it + 1, v.end());
 }
 
-template < typename T>
-std::pair<bool, int > find_in_collection(const std::deque<T>& vecOfElements, const T& element) {
-	std::pair<bool, int > result;
-	auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
+template <typename T>
+pair<bool, int > find_in_collection(const deque<T>& vecOfElements, const T& element) {
+	pair<bool, int > result;
+	auto it = find(vecOfElements.begin(), vecOfElements.end(), element);
 	if (it != vecOfElements.end())
 	{
 		result.second = distance(vecOfElements.begin(), it);
@@ -189,9 +189,9 @@ BOOL jc_wait_on_clipboard(HWND hWnd, int maxRetryCount = JC_MAX_RETRY_COUNT)
 }
 
 
-void jc_alert(std::string item) { MessageBox(NULL, jc_charToCWSTR(item.c_str()), _T("Alert"), MB_OK); }
+void jc_alert(string item) { MessageBox(NULL, jc_charToCWSTR(item.c_str()), _T("Alert"), MB_OK); }
 
-void jc_set_clipboard(std::string item, HWND hWnd)
+void jc_set_clipboard(string item, HWND hWnd)
 {
 	BOOL success = jc_wait_on_clipboard(hWnd);
 	if (success)
@@ -216,8 +216,8 @@ void jc_append_file(const char* fileName, const char* message, bool shouldReplac
 		replaceAll(s, "\r\n", "\\\\n");
 	}
 	ofstream myfile;
-	myfile.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-	myfile.open(fileName, std::ios_base::app);
+	myfile.exceptions(ofstream::failbit | ofstream::badbit);
+	myfile.open(fileName, ios_base::app);
 	myfile << s << "\n";
 	myfile.close();
 
@@ -226,12 +226,12 @@ void jc_append_file(const char* fileName, const char* message, bool shouldReplac
 void jc_log(const char* msg) { jc_append_file(JC_LOG_FILE, msg); }
 void jc_history(const char* msg) { jc_append_file(JC_HISTORY_FILE, msg, true); }
 
-bool read_file_as_lines(std::string fileName, std::vector<std::string>& vecOfStrs) {
-	std::ifstream in(fileName.c_str());
+bool read_file_as_lines(string fileName, vector<string>& vecOfStrs) {
+	ifstream in(fileName.c_str());
 	if (!in) return false;
 
-	std::string str;
-	while (std::getline(in, str))
+	string str;
+	while (getline(in, str))
 	{
 		if (str.size() > 0) vecOfStrs.push_back(str);
 	}
@@ -240,8 +240,8 @@ bool read_file_as_lines(std::string fileName, std::vector<std::string>& vecOfStr
 	return true;
 }
 
-void jc_load_history_file(std::string filePath) {
-	std::vector<string> lines;
+void jc_load_history_file(string filePath) {
+	vector<string> lines;
 	JC_CLIPBOARD_HISTORY.clear();
 
 	if (read_file_as_lines(filePath, lines))
@@ -267,7 +267,7 @@ int jc_get_modifier_code_from_string(string item)
 	else if (case_insensitive_match("shift", item)) return MOD_SHIFT;
 	else if (case_insensitive_match("alt", item)) return MOD_ALT;
 	else if (case_insensitive_match("windows", item)) return MOD_WIN;
-	else jc_log(std::string("Couldnt recognize key code " + item).c_str());
+	else jc_log(string("Couldnt recognize key code " + item).c_str());
 	return 0;
 
 }
@@ -330,7 +330,7 @@ void jc_load_hotkeys(char* config, HWND hwnd) {
 
 	int modifiers = 0;
 	int key = 0;
-	std::vector<string> lines;
+	vector<string> lines;
 	if (read_file_as_lines(config, lines)) {
 		auto results = split_string(lines[0], "+");
 		for (auto item : results)
@@ -349,7 +349,7 @@ void jc_load_hotkeys(char* config, HWND hwnd) {
 
 }
 
-std::string jc_get_clipboard(HWND hWnd) {
+string jc_get_clipboard(HWND hWnd) {
 
 	BOOL success = jc_wait_on_clipboard(hWnd);
 	string ret = "";
@@ -361,7 +361,7 @@ std::string jc_get_clipboard(HWND hWnd) {
 			char* pchData = (char*)GlobalLock(hClipboardData);
 			CloseClipboard();
 			GlobalUnlock(hClipboardData);
-			if (pchData) ret = std::string(pchData);
+			if (pchData) ret = string(pchData);
 
 		}
 		else
@@ -373,7 +373,7 @@ std::string jc_get_clipboard(HWND hWnd) {
 		}
 	}
 	else {
-		jc_log(std::string("Couldnt handle to clipboard after " + std::to_string(JC_MAX_RETRY_COUNT) + " tries").c_str());
+		jc_log(string("Couldnt handle to clipboard after " + to_string(JC_MAX_RETRY_COUNT) + " tries").c_str());
 	}
 	return ret;
 
@@ -414,8 +414,8 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 	HMENU hPopMenu = CreatePopupMenu();
 	for (int i = 0; i < JC_CLIPBOARD_HISTORY.size(); i++)
 	{
-		std::string item = JC_CLIPBOARD_HISTORY[i];
-		std::string label = trim(item);
+		string item = JC_CLIPBOARD_HISTORY[i];
+		string label = trim(item);
 		label.resize(min(item.length(), JC_MAX_MENU_LABEL_LENGTH));
 		if (label.length() == JC_MAX_MENU_LABEL_LENGTH)
 		{
