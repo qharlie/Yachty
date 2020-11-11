@@ -289,17 +289,25 @@ std::string jc_get_clipboard(HWND hWnd)
 	if (success) {
 
 		HANDLE hClipboardData = GetClipboardData(CF_TEXT);
+		string ret = "";
 		if (hClipboardData) {
 			char* pchData = (char*)GlobalLock(hClipboardData);
 			CloseClipboard();
 			GlobalUnlock(hClipboardData);
-			if (pchData)
-				return std::string(pchData);
-			else return "";
+			if (pchData) ret = std::string(pchData);
+
 		}
-		else return "";
+		else
+		{
+			CloseClipboard();
+			try { GlobalUnlock(hClipboardData); }
+			catch (exception e) {}
+
+		}
+		return ret;
 	}
 	else {
+		jc_log(std::string("Couldnt handle to clipboard after " + std::to_string(JC_MAX_RETRY_COUNT) + " tries").c_str());
 		return std::string("");
 	}
 
@@ -418,6 +426,8 @@ INT_PTR CALLBACK jc_show_rsearch_dialog(HWND hDlg, UINT message, WPARAM wParam, 
 {
 	UNREFERENCED_PARAMETER(lParam);
 	HWND hSearchResults;
+	int wmId = LOWORD(wParam);
+	int wmEvent = HIWORD(wParam);
 
 	switch (message)
 	{
@@ -434,11 +444,18 @@ INT_PTR CALLBACK jc_show_rsearch_dialog(HWND hDlg, UINT message, WPARAM wParam, 
 		return (INT_PTR)TRUE;
 
 	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+
+
+		if (wmEvent == CBN_SELCHANGE)
+		{
+			jc_alert("Selection Changed");
+		}
+		else if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
 		{
 			EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
 		}
+
 		break;
 	}
 	return (INT_PTR)FALSE;

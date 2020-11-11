@@ -13,13 +13,13 @@ BOOL				init_instance(HINSTANCE, int);
 LRESULT CALLBACK	main_event_handler(HWND, UINT, WPARAM, LPARAM);
 
 // Global Variables:
-HINSTANCE globalInstance;	// current instance
+HINSTANCE globalInstance;
 NOTIFYICONDATA nidApp;
 HMENU hPopMenu;
-TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
-TCHAR szApplicationToolTip[MAX_LOADSTRING];	    // the main window class name
-BOOL bDisable = FALSE;							// keep application state
+TCHAR szTitle[MAX_LOADSTRING];
+TCHAR szWindowClass[MAX_LOADSTRING];
+TCHAR szApplicationToolTip[MAX_LOADSTRING];
+BOOL bDisable = FALSE;
 HWND hwndNextViewer;
 HWND globalHWND;
 HWND callingWindowHWND;
@@ -59,10 +59,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadString(hInstance, IDC_JUMPCUT, szWindowClass, MAX_LOADSTRING);
 
 	register_class(hInstance);
-	//UINT_PTR timerid = SetTimer(NULL, 0, 5000, (TIMERPROC)jc_show_menu_at_current_point);
 
-
-	// Perform application initialization:
 	if (!init_instance(hInstance, nCmdShow))
 	{
 		return FALSE;
@@ -211,9 +208,8 @@ void jc_load_hotkeys(char* config)
 		globalHWND,
 		JC_HOTKEY,
 		modifiers,
-		key)) {
-		jc_error_and_exit(_TEXT("COULDNT REGISTER HOTKEY, ASSUMING FATAL ERROR AND BAILING OUT."));
-	}
+		key)) jc_error_and_exit(_TEXT("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it."));
+
 }
 BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 {
@@ -233,11 +229,11 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 
 	hMainIcon = LoadIcon(hInstance, (LPCTSTR)MAKEINTRESOURCE(IDI_JUMPCUT));
 
-	nidApp.cbSize = sizeof(NOTIFYICONDATA); // sizeof the struct in bytes 
-	nidApp.hWnd = (HWND)globalHWND;              //handle of the window which will process this app. messages 
-	nidApp.uID = IDI_JUMPCUT;           //ID of the icon that willl appear in the system tray 
-	nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP; //ORing of all the flags 
-	nidApp.hIcon = hMainIcon; // handle of the Icon to be displayed, obtained from LoadIcon 
+	nidApp.cbSize = sizeof(NOTIFYICONDATA);
+	nidApp.hWnd = (HWND)globalHWND;              
+	nidApp.uID = IDI_JUMPCUT;           
+	nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP; 
+	nidApp.hIcon = hMainIcon; 
 	nidApp.uCallbackMessage = WM_USER_SHELLICON;
 	LoadString(hInstance, IDS_APPTOOLTIP, nidApp.szTip, MAX_LOADSTRING);
 	Shell_NotifyIcon(NIM_ADD, &nidApp);
@@ -302,12 +298,6 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 		break;
 	}
-	case WM_CHANGECBCHAIN:
-		if ((HWND)wParam == hwndNextViewer)
-			hwndNextViewer = (HWND)lParam;
-		else if (hwndNextViewer != NULL)
-			SendMessage(hwndNextViewer, message, wParam, lParam);
-		break;
 
 	case WM_DESTROY:
 		ChangeClipboardChain(hWnd, hwndNextViewer);
