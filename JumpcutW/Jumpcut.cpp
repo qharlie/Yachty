@@ -123,11 +123,11 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 
 BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam)
 {
-	if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/) {
-		jc_log(hwnd_to_string(hwnd).c_str());
-		PostMessage(hwnd, WM_PASTE, 0, 0);
-		PostMessage(hwnd, WM_COMMAND, WM_PASTE, 0);
-	}
+	//if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/) {
+	//	jc_log(hwnd_to_string(hwnd).c_str());
+	//	PostMessage(hwnd, WM_PASTE, 0, 0);
+	//	PostMessage(hwnd, WM_COMMAND, WM_PASTE, 0);
+	//}
 	return TRUE;
 }
 

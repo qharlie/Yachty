@@ -64,11 +64,11 @@ END
 //
 
 IDD_ABOUTBOX DIALOGEX 22, 17, 163, 154
-STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | WS_CAPTION | WS_SYSMENU
 CAPTION "Jumpcut For Windows"
-FONT 12, "Verdana", 400, 0, 0x0
+FONT 14, "Verdana", 400, 0, 0x0
 BEGIN
-    LTEXT           "JumpcutW v0.1",IDC_STATIC,56,14,51,8,SS_NOPREFIX
+    CONTROL         "JumpcutW v1.17",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,52,14,55,8
     DEFPUSHBUTTON   "OK",IDOK,121,135,30,11,WS_GROUP
     LTEXT           "This is a windows rewrite of Jumpcut for MacOS https://snark.github.io/jumpcut",IDC_STATIC,9,88,139,18,SS_NOPREFIX
     LTEXT           "JumcuptW records your clipboard history and makes it accessible by left clicking the JumpcutW icon.",IDC_STATIC,9,29,134,25,SS_NOPREFIX,WS_EX_TRANSPARENT
