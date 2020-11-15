@@ -21,7 +21,7 @@ Microsoft Store
  - [Store Link](https://www.microsoft.com/en-us/p/jumpcut/9nhn4f6b5vfp)
 
 Windows 10 Installer:
- - [Version 1.1 Installer](https://github.com/qorrect/JumpcutW/blob/main/Binaries/JumpcutWInstaller.msi?raw=true)
+ - [Version 1.17 Installer](https://github.com/qorrect/JumpcutW/blob/main/Binaries/JumpcutWInstaller.msi?raw=true)
 
 Build from Source:
  - You'll need the free Visual Studio Community Edition 2019.  Clone this project, open JumpcutW.sln and click Build to generate JumpcutW.exe.
