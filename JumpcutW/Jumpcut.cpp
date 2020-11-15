@@ -145,21 +145,18 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		break;
 	case WM_CLIPBOARDUPDATE: {
 		std::string clip = jc_get_clipboard(hWnd);
-		if (!clip.empty()) {
-			if (clip != JC_LAST_CLIPBOARD_ENTRY) {
-				std::pair<bool, int> result = find_in_collection(JC_CLIPBOARD_HISTORY, clip);
-				if (result.first) move_item_to_tail(JC_CLIPBOARD_HISTORY, result.second);
-				else {
-					if (JC_CLIPBOARD_HISTORY.size() + 1 > JC_MAX_HISTORY_SIZE) {
-						JC_CLIPBOARD_HISTORY.pop_front();
-					}
-					JC_CLIPBOARD_HISTORY.push_back(clip);
-					jc_history(clip.c_str());
-					jc_log(clip.c_str());
-					JC_LAST_CLIPBOARD_ENTRY = clip;
+		if (!clip.empty() && clip != JC_LAST_CLIPBOARD_ENTRY) {
+			std::pair<bool, int> result = find_in_collection(JC_CLIPBOARD_HISTORY, clip);
+			if (result.first) move_item_to_tail(JC_CLIPBOARD_HISTORY, result.second);
+			else {
+				if (JC_CLIPBOARD_HISTORY.size() + 1 > JC_MAX_HISTORY_SIZE) {
+					JC_CLIPBOARD_HISTORY.pop_front();
 				}
+				JC_CLIPBOARD_HISTORY.push_back(clip);
+				jc_history(clip.c_str());
+				jc_log(clip.c_str());
+				JC_LAST_CLIPBOARD_ENTRY = clip;
 			}
-			else jc_log("Skipping Duplicate");
 		}
 		break;
 	}
