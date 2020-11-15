@@ -2,6 +2,8 @@
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap rescap">
@@ -9,7 +11,7 @@
   <Identity
     Name="35363TheCharlieCompany.Jumpcut"
     Publisher="CN=283133A9-7713-48E1-B1C7-6333DC9B0261"
-    Version="1.0.7.0" />
+    Version="1.0.17.0" />
 
   <Properties>
     <DisplayName>Jumpcut</DisplayName>
@@ -40,12 +42,25 @@
         <uap:SplashScreen Image="Images\SplashScreen.png" />
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="landscape"/>
-          <uap:Rotation Preference="portrait"/></uap:InitialRotationPreference>
+          <uap:Rotation Preference="portrait"/>
+        </uap:InitialRotationPreference>
       </uap:VisualElements>
+      <Extensions>
+        <desktop:Extension
+           Category="windows.startupTask"
+           EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask
+            TaskId="MyStartupTask"
+            Enabled="true"
+            DisplayName="Jumpcut" />
+        </desktop:Extension>
+
+      </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
+
 </Package>

@@ -27,9 +27,9 @@ const int   JC_MAX_MENU_LABEL_LENGTH = 65;
 const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
 const char* JS_WHITESPACE = " \t\n\r\f\v";
 const UINT  JC_MAX_RETRY_COUNT = 5;
-const UINT  JC_MAX_HISTORY_SIZE = 40;
+const UINT  JC_MAX_HISTORY_SIZE = 25;
 const int   JC_MENU_ID_BASE = 2000;
-const char* JC_APPLICATION_NAME = "JumpcutW_v0.1";
+const char* JC_APPLICATION_NAME = "JumpcutW_v1";
 
 string             JC_LAST_CLIPBOARD_ENTRY;
 deque<string> JC_CLIPBOARD_HISTORY;
@@ -267,7 +267,6 @@ int jc_get_modifier_code_from_string(string item)
 	else if (case_insensitive_match("shift", item)) return MOD_SHIFT;
 	else if (case_insensitive_match("alt", item)) return MOD_ALT;
 	else if (case_insensitive_match("windows", item)) return MOD_WIN;
-	else jc_log(string("Couldnt recognize key code " + item).c_str());
 	return 0;
 
 }
@@ -414,6 +413,7 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 	HMENU hPopMenu = CreatePopupMenu();
 	for (int i = 0; i < JC_CLIPBOARD_HISTORY.size(); i++)
 	{
+		if (i > JC_MAX_HISTORY_SIZE) break;
 		string item = JC_CLIPBOARD_HISTORY[i];
 		string label = trim(item);
 		label.resize(min(item.length(), JC_MAX_MENU_LABEL_LENGTH));

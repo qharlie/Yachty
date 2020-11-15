@@ -1,6 +1,6 @@
 Field,ID,Type (Type),default,en-us
 Description,2,Text,A clipboard history tool with an intuitive interface and global hot key for quick access to your clipboard history.,
-ReleaseNotes,3,Text,"Initial release, added support for custom global hot key in ~/.jc_config.txt ",
+ReleaseNotes,3,Text,"Adding more possible modifiers for global hotkey, default is control+alt+shift+r, configure in ~/.jc_config.txt",
 Title,4,Text,Jumpcut,
 ShortTitle,5,Text,Jumpcut,
 SortTitle,6,Text,jumpcut,

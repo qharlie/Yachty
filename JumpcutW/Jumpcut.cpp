@@ -21,7 +21,7 @@ BOOL bDisable = FALSE;
 HWND hwndNextViewer;
 HWND globalHWND;
 HWND callingWindowHWND;
-
+std::string JUMPCUT_INSTALLER_STRING = "JUMPCUT_INSTALLER";
 
 // main entry point 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow) {
@@ -39,7 +39,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
 	// This is for spawning a clone of this app on install, otherwise the installer hangs
-	if (argCount == 2) { // And argv[1] == 'INSTALL'	
+	if (argCount == 2 && szArgList != NULL && jc_CWSTRToString(szArgList[1]) == JUMPCUT_INSTALLER_STRING) {
 		jc_start_external_application(szArgList[0]);
 		return 0;
 	}
