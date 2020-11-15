@@ -121,6 +121,7 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 }
 
 
+
 BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam)
 {
 	//if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/) {
