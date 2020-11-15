@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://github.com/qorrect/JumpcutW/blob/main/Assets/logo.png" height="200"/>
+ ![Logo](https://github.com/qorrect/JumpcutW/blob/main/Assets/logo.png?raw=true)
 </p>
 
 <p>
