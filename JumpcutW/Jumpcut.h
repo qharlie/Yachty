@@ -15,13 +15,13 @@
 #define JC_HOTKEY 9000
 #define MAX_LOADSTRING 100
 #define	WM_USER_SHELLICON WM_USER + 1
-
+#define PATH_STR_SIZE 65535
 using namespace std;
 
 // Globals and constants 
-char JC_LOG_FILE[65535];
-char JC_HISTORY_FILE[65535];
-char JC_CONFIG_FILE[65535];
+char JC_LOG_FILE[PATH_STR_SIZE];
+char JC_HISTORY_FILE[PATH_STR_SIZE];
+char JC_CONFIG_FILE[PATH_STR_SIZE];
 
 const int   JC_MAX_MENU_LABEL_LENGTH = 65;
 const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
@@ -32,10 +32,58 @@ const int   JC_MENU_ID_BASE = 2000;
 const char* JC_APPLICATION_NAME = "JumpcutW_v1";
 
 string             JC_LAST_CLIPBOARD_ENTRY;
-deque<string> JC_CLIPBOARD_HISTORY;
+deque<string>      JC_CLIPBOARD_HISTORY;
+
+bool replace(string& str, const string& from, const string& to) {
+	size_t start_pos = str.find(from);
+	if (start_pos == string::npos)
+		return false;
+	str.replace(start_pos, from.length(), to);
+	return true;
+}
+void replaceAll(string& str, const string& from, const string& to) {
+	if (from.empty())
+		return;
+	size_t start_pos = 0;
+	while ((start_pos = str.find(from, start_pos)) != string::npos) {
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+	}
+}
+void jc_append_file(const char* fileName, const char* message, bool shouldReplaceNewLines = false) {
+	string s = message;
+	if (shouldReplaceNewLines) replaceAll(s, "\r\n", "\\\\n");
+
+	ofstream myfile;
+	myfile.exceptions(ofstream::failbit | ofstream::badbit);
+	myfile.open(fileName, ios_base::app);
+	myfile << s << "\n";
+	myfile.close();
+}
+
+void jc_log(const char* msg) { jc_append_file(JC_LOG_FILE, msg); }
+void jc_history(const char* msg) { jc_append_file(JC_HISTORY_FILE, msg, true); }
+// Convert to wide char 
+wchar_t* jc_charToCWSTR(const char* charArray) {
+	int len = strlen(charArray);
+	wchar_t* wString = new wchar_t[len + 1];
+	MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, len + 1);
+	return wString;
+}
+// Convert from wide char 
+string jc_CWSTRToString(const wchar_t* charArray) {
+	int len = wcslen(charArray);
+	char* str = new char[len + 1];
+	memset(str, 0, len);
+	wcstombs(str, charArray, len + 1);
+	string ret = string(str);
+	delete str;
+	return ret;
+}
 
 // Bail out with an error mesage 
 void jc_error_and_exit(LPTSTR lpszFunction) {
+	jc_log(jc_CWSTRToString(lpszFunction).c_str());
 	DWORD dw = GetLastError();
 
 	// Retrieve the system error message for the last-error code
@@ -95,22 +143,7 @@ vector<string> split_string(const string& str,
 
 	return strings;
 }
-bool replace(string& str, const string& from, const string& to) {
-	size_t start_pos = str.find(from);
-	if (start_pos == string::npos)
-		return false;
-	str.replace(start_pos, from.length(), to);
-	return true;
-}
-void replaceAll(string& str, const string& from, const string& to) {
-	if (from.empty())
-		return;
-	size_t start_pos = 0;
-	while ((start_pos = str.find(from, start_pos)) != string::npos) {
-		str.replace(start_pos, from.length(), to);
-		start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
-	}
-}
+
 // trim from end of string (right)
 inline string& rtrim(string& s, const char* t = JS_WHITESPACE) {
 	s.erase(s.find_last_not_of(t) + 1);
@@ -128,25 +161,6 @@ inline string& trim(string& s, const char* t = JS_WHITESPACE) {
 	return ltrim(rtrim(s, t), t);
 }
 
-// Convert to wide char 
-wchar_t* jc_charToCWSTR(const char* charArray) {
-	int len = strlen(charArray);
-	wchar_t* wString = new wchar_t[len + 1];
-	MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, len + 1);
-	return wString;
-}
-// Convert from wide char 
-string jc_CWSTRToString(const wchar_t* charArray) {
-
-	int len = wcslen(charArray);
-	char* str = new char[len + 1];
-	memset(str, 0, len);
-	wcstombs(str, charArray, len + 1);
-	string ret = string(str);
-	delete str;
-
-	return ret;
-}
 
 template <typename T>
 void move_item_to_tail(deque<T>& v, size_t itemIndex) {
@@ -207,24 +221,6 @@ void jc_set_clipboard(string item, HWND hWnd)
 		CloseClipboard();
 	}
 }
-
-void jc_append_file(const char* fileName, const char* message, bool shouldReplaceNewLines = false)
-{
-	string s = message;
-	if (shouldReplaceNewLines)
-	{
-		replaceAll(s, "\r\n", "\\\\n");
-	}
-	ofstream myfile;
-	myfile.exceptions(ofstream::failbit | ofstream::badbit);
-	myfile.open(fileName, ios_base::app);
-	myfile << s << "\n";
-	myfile.close();
-
-}
-
-void jc_log(const char* msg) { jc_append_file(JC_LOG_FILE, msg); }
-void jc_history(const char* msg) { jc_append_file(JC_HISTORY_FILE, msg, true); }
 
 bool read_file_as_lines(string fileName, vector<string>& vecOfStrs) {
 	ifstream in(fileName.c_str());

@@ -29,9 +29,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	sprintf(JC_LOG_FILE, "%s\\.jc_log.txt", JC_USERS_HOME_DIRECTORY);
-	sprintf(JC_HISTORY_FILE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
-	sprintf(JC_CONFIG_FILE, "%s\\.jc_config.txt", JC_USERS_HOME_DIRECTORY);
+	snprintf(JC_LOG_FILE, PATH_STR_SIZE, "%s\\.jc_log.txt", JC_USERS_HOME_DIRECTORY);
+	snprintf(JC_HISTORY_FILE, PATH_STR_SIZE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
+	snprintf(JC_CONFIG_FILE, PATH_STR_SIZE, "%s\\.jc_config.txt", JC_USERS_HOME_DIRECTORY);
 
 	globalInstance = hInstance;
 	LPWSTR* szArgList;
@@ -93,8 +93,7 @@ ATOM register_class(HINSTANCE hInstance) {
 }
 
 
-BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
-{
+BOOL init_instance(HINSTANCE hInstance, int nCmdShow) {
 	HICON hMainIcon;
 
 	globalHWND = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
@@ -122,8 +121,7 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow)
 
 
 
-BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam)
-{
+BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam) {
 	//if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/) {
 	//	jc_log(hwnd_to_string(hwnd).c_str());
 	//	PostMessage(hwnd, WM_PASTE, 0, 0);
@@ -141,17 +139,14 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	switch (message)
 	{
 	case WM_HOTKEY:
-		callingWindowHWND = GetForegroundWindow();
 		GetCursorPos(&lpClickPoint);
 		hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance, false);
 		return TRUE;
 		break;
 	case WM_CLIPBOARDUPDATE: {
 		std::string clip = jc_get_clipboard(hWnd);
-		if (!clip.empty())
-		{
-			if (clip != JC_LAST_CLIPBOARD_ENTRY)
-			{
+		if (!clip.empty()) {
+			if (clip != JC_LAST_CLIPBOARD_ENTRY) {
 				std::pair<bool, int> result = find_in_collection(JC_CLIPBOARD_HISTORY, clip);
 				if (result.first) move_item_to_tail(JC_CLIPBOARD_HISTORY, result.second);
 				else {
