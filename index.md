@@ -1,6 +1,4 @@
-<p align="center">
- ![Logo](https://github.com/qorrect/JumpcutW/blob/main/Assets/logo.png?raw=true)
-</p>
+![Logo](https://github.com/qorrect/JumpcutW/blob/main/Assets/logo.png?raw=true)
 
 <p>
 JumpcutW is a clipboard history tool that records your clipboard history and displays it in a menu from an icon in the taskbar.  Selecting the item will then copy it to your current clipboard and you can paste like you normally would.
