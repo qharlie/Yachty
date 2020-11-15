@@ -1,37 +1,39 @@
-## Welcome to GitHub Pages
+<p align="center">
+ <img src="https://github.com/qorrect/JumpcutW/blob/main/Assets/logo.png" height="200"/>
+</p>
 
-You can use the [editor on GitHub](https://github.com/qorrect/JumpcutW/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+<p>
+JumpcutW is a clipboard history tool that records your clipboard history and displays it in a menu from an icon in the taskbar.  Selecting the item will then copy it to your current clipboard and you can paste like you normally would.
+</p>
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/Assets/greenshot.png?raw=true)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+You can also hit the global hot key ( defaults to Ctrl+Alt+Shift+R , edit in ~/.jc_config.txt )
 
-```markdown
-Syntax highlighted code block
+![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/Assets/greenshot2.png?raw=true)
 
-# Header 1
-## Header 2
-### Header 3
+JumpcutW is a windows clone of the famous Jumpcut for MacOS https://snark.github.io/jumpcut/ .
 
-- Bulleted
-- List
+# Installing
 
-1. Numbered
-2. List
+Microsoft Store
+ - [Store Link](https://www.microsoft.com/en-us/p/jumpcut/9nhn4f6b5vfp)
 
-**Bold** and _Italic_ and `Code` text
+Windows 10 Installer:
+ - [Version 1.18](https://github.com/qorrect/JumpcutW/releases/tag/release_20201115)
 
-[Link](url) and ![Image](src)
-```
+Build from Source:
+ - You'll need the free Visual Studio Community Edition 2019.  Clone this project, open JumpcutW.sln and click Build to generate JumpcutW.exe.
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
-### Jekyll Themes
+# Ensuring JumpcutW stays visible in the Task Tray
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/qorrect/JumpcutW/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+With Windows 10 you have to tell it which icons you want visible, hit Start->Type "Taskbar Settings", Scroll Down untill you find the phrase "Select which icons appear on the taskbar" , and toggle JumpcutW.exe to ON.
 
-### Support or Contact
+![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/Assets/toolbar1.png?raw=true)
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/Assets/toolbar2.png?raw=true)
+
+![Screenshot](https://github.com/qorrect/JumpcutW/blob/main/Assets/toolbar3.png?raw=true)
+
