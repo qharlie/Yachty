@@ -1,6 +1,8 @@
 #pragma once
 #include <windows.h>
 #include <string>
+#include <map>
+#include <sstream>
 #include <strsafe.h>
 #include "resource.h"
 #include <iostream>
@@ -12,27 +14,32 @@
 #include <commctrl.h>
 
 #define IDM_RSEARCH 201
-#define JC_HOTKEY 9000
+#define JC_MENU_HOTKEY 9000
+#define JC_SEARCH_HOTKEY 9001
+
 #define MAX_LOADSTRING 100
 #define	WM_USER_SHELLICON WM_USER + 1
 #define PATH_STR_SIZE 65535
 using namespace std;
 
 // Globals and constants 
-char JC_LOG_FILE[PATH_STR_SIZE];
-char JC_HISTORY_FILE[PATH_STR_SIZE];
-char JC_CONFIG_FILE[PATH_STR_SIZE];
-
-const int   JC_MAX_MENU_LABEL_LENGTH = 65;
+char          JC_LOG_FILE[PATH_STR_SIZE];
+char          JC_HISTORY_FILE[PATH_STR_SIZE];
+char          JC_CONFIG_FILE[PATH_STR_SIZE];
+const int     JC_MAX_MENU_LABEL_LENGTH = 65;
 const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
 const char* JS_WHITESPACE = " \t\n\r\f\v";
-const UINT  JC_MAX_RETRY_COUNT = 5;
-const UINT  JC_MAX_HISTORY_SIZE = 25;
-const int   JC_MENU_ID_BASE = 2000;
-const char* JC_APPLICATION_NAME = "JumpcutW_v1";
+const UINT    JC_MAX_RETRY_COUNT = 5;
+const UINT    JC_MAX_HISTORY_SIZE = 25;
+const int     JC_MENU_ID_BASE = 2000;
+const char* JC_APPLICATION_NAME = "JumpcutW_v1.2";
+HINSTANCE     JC_INSTANCE;
+HWND          JC_MAIN_WINDOW;
+HWND		  JC_SEARCH_WINDOW;
+HWND          JC_SEARCH_DIALOG_LIST;
+string        JC_LAST_CLIPBOARD_ENTRY;
+deque<string> JC_CLIPBOARD_HISTORY;
 
-string             JC_LAST_CLIPBOARD_ENTRY;
-deque<string>      JC_CLIPBOARD_HISTORY;
 
 bool replace(string& str, const string& from, const string& to) {
 	size_t start_pos = str.find(from);
@@ -50,6 +57,7 @@ void replaceAll(string& str, const string& from, const string& to) {
 		start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
 	}
 }
+
 void jc_append_file(const char* fileName, const char* message, bool shouldReplaceNewLines = false) {
 	string s = message;
 	if (shouldReplaceNewLines) replaceAll(s, "\r\n", "\\\\n");
@@ -117,6 +125,17 @@ void jc_error_and_exit(LPTSTR lpszFunction) {
 	ExitProcess(dw);
 }
 
+/// Try to find in the Haystack the Needle - ignore case
+bool case_insensitive_find(const string& strHaystack, const string& strNeedle)
+{
+	auto it = search(
+		strHaystack.begin(), strHaystack.end(),
+		strNeedle.begin(), strNeedle.end(),
+		[](char ch1, char ch2) { return toupper(ch1) == toupper(ch2); }
+	);
+	return (it != strHaystack.end());
+}
+
 bool case_insensitive_match(string s1, string s2) {
 	//convert s1 and s2 into lower case strings
 	transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
@@ -126,12 +145,11 @@ bool case_insensitive_match(string s1, string s2) {
 	return 0; //not matched
 }
 
-vector<string> split_string(const string& str,
-	const string& delimiter) {
+vector<string> split_string(const string& str, const string& delimiter) {
 	vector<string> strings;
-
 	string::size_type pos = 0;
 	string::size_type prev = 0;
+
 	while ((pos = str.find(delimiter, prev)) != string::npos)
 	{
 		strings.push_back(str.substr(prev, pos - prev));
@@ -140,7 +158,6 @@ vector<string> split_string(const string& str,
 
 	// To get the last substring (or only, if delimiter is not found)
 	strings.push_back(str.substr(prev));
-
 	return strings;
 }
 
@@ -235,7 +252,25 @@ bool read_file_as_lines(string fileName, vector<string>& vecOfStrs) {
 	in.close();
 	return true;
 }
-
+map<string, string> read_config_file(string file_path)
+{
+	map<string, string> configs;
+	vector<string> lines;
+	if (read_file_as_lines(file_path, lines)) {
+		for (string line : lines)
+		{
+			istringstream is_line(line);
+			string key;
+			if (getline(is_line, key, '='))
+			{
+				string value;
+				if (getline(is_line, value))
+					configs[key] = value;
+			}
+		}
+	}
+	return configs;
+}
 void jc_load_history_file(string filePath) {
 	vector<string> lines;
 	JC_CLIPBOARD_HISTORY.clear();
@@ -320,27 +355,61 @@ int jc_get_key_code_from_string(string item) {
 	else if (item == "F12" || item == "f12") return VK_F12;
 	else return 0;
 }
-
-void jc_load_hotkeys(char* config, HWND hwnd) {
-
+struct KeyCode {
 	int modifiers = 0;
 	int key = 0;
-	vector<string> lines;
-	if (read_file_as_lines(config, lines)) {
-		auto results = split_string(lines[0], "+");
-		for (auto item : results)
-		{
-			modifiers |= jc_get_modifier_code_from_string(trim(item));
-			key |= jc_get_key_code_from_string(trim(item));
-		}
+};
+KeyCode jc_get_key_codes(string str)
+{
+	int modifiers = 0;
+	int key = 0;
+	auto results = split_string(str, "+");
+	for (auto item : results)
+	{
+		modifiers |= jc_get_modifier_code_from_string(trim(item));
+		key |= jc_get_key_code_from_string(trim(item));
+	}
+	KeyCode code;
+	code.key = key;
+	code.modifiers = modifiers;
+	return code;
+
+}
+void jc_load_hotkeys_v2(char* config_path, HWND hwnd) {
+
+
+	map<string, string> config = read_config_file(config_path);
+	if (config.count("menu") >= 1) {
+		// Load it 
+		string menu = config["menu"];
+		auto code = jc_get_key_codes(menu);
+		if (!RegisterHotKey(hwnd, JC_MENU_HOTKEY, code.modifiers, code.key)) jc_log("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it.");
+
 	}
 	else {
-		jc_append_file(config, "control+alt+shift+r");
-		modifiers = MOD_ALT | MOD_CONTROL | MOD_SHIFT;
-		key = jc_get_key_code_from_string("R");
+		// Set defaults
+		string key_chord = "control+alt+shift+r";
+		jc_append_file(config_path, string("menu=" + key_chord).c_str());
+		auto code = jc_get_key_codes(key_chord);
+		if (!RegisterHotKey(hwnd, JC_MENU_HOTKEY, code.modifiers, code.key)) jc_log("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it.");
 	}
+	if (config.count("search") >= 1)
+	{
+		// Load it 
+		string menu = config["search"];
+		auto code = jc_get_key_codes(menu);
+		if (!RegisterHotKey(hwnd, JC_SEARCH_HOTKEY, code.modifiers, code.key)) jc_log("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it.");
 
-	if (!RegisterHotKey(hwnd, JC_HOTKEY, modifiers, key)) jc_error_and_exit(_TEXT("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it."));
+	}
+	else
+	{
+		// Set defaults
+		string key_chord = "control+alt+shift+e";
+		jc_append_file(config_path, string("search=" + key_chord).c_str());
+		auto code = jc_get_key_codes(key_chord);
+		if (!RegisterHotKey(hwnd, JC_SEARCH_HOTKEY, code.modifiers, code.key)) jc_log("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it.");
+
+	}
 
 }
 
@@ -426,8 +495,7 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
 
 		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
-		//InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_RSEARCH, _T("Search"));
-
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_RSEARCH, _T("Search"));
 		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
 
 	}
@@ -481,43 +549,20 @@ void center_window(HWND hWnd)
 
 	SetWindowPos(hWnd, 0, xPos, yPos, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
-INT_PTR CALLBACK jc_show_rsearch_dialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	UNREFERENCED_PARAMETER(lParam);
-	HWND hSearchResults;
-	int wmId = LOWORD(wParam);
-	int wmEvent = HIWORD(wParam);
 
-	switch (message)
+string get_solo_listbox_text(HWND hSearchResultsList) {
+
+}
+string get_selected_listbox_text(HWND hSearchResultsList) {
+	int itemIndex = (int)SendMessage(hSearchResultsList, LB_GETCURSEL, (WPARAM)0, (LPARAM)0);
+	if (itemIndex == LB_ERR)
 	{
-	case WM_INITDIALOG:
-		center_window(hDlg);
-		hSearchResults = GetDlgItem(hDlg, IDC_SEARCH_RESULTS);
-		if (hSearchResults != NULL) {
-			for (auto str : JC_CLIPBOARD_HISTORY)
-			{
-				SendMessage(hSearchResults, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(jc_charToCWSTR(str.c_str())));
-			}
-		}
-		SendMessage(hSearchResults, CB_SETMINVISIBLE, (WPARAM)45, 0);
-		return (INT_PTR)TRUE;
-
-	case WM_COMMAND:
-
-
-		if (wmEvent == CBN_SELCHANGE)
-		{
-			jc_alert("Selection Changed");
-		}
-		else if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-
-		break;
+		return "";
 	}
-	return (INT_PTR)FALSE;
+	int textLen = (int)SendMessage(hSearchResultsList, LB_GETTEXTLEN, (WPARAM)itemIndex, 0);
+	TCHAR* textBuffer = new TCHAR[textLen + 1];
+	SendMessage(hSearchResultsList, LB_GETTEXT, (WPARAM)itemIndex, (LPARAM)textBuffer);
+	return jc_CWSTRToString(textBuffer);
 }
 
 string hwnd_to_string(HWND inputA)

@@ -9,9 +9,8 @@
 ATOM register_class(HINSTANCE hInstance);
 BOOL init_instance(HINSTANCE, int);
 LRESULT CALLBACK main_event_handler(HWND, UINT, WPARAM, LPARAM);
-
+LRESULT CALLBACK global_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam);
 // Global Variables
-HINSTANCE globalInstance;
 NOTIFYICONDATA nidApp;
 HMENU hPopMenu;
 TCHAR szTitle[MAX_LOADSTRING];
@@ -19,9 +18,10 @@ TCHAR szWindowClass[MAX_LOADSTRING];
 TCHAR szApplicationToolTip[MAX_LOADSTRING];
 BOOL bDisable = FALSE;
 HWND hwndNextViewer;
-HWND globalHWND;
 HWND callingWindowHWND;
-std::string JUMPCUT_INSTALLER_STRING = "JUMPCUT_INSTALLER";
+string JUMPCUT_INSTALLER_STRING = "JUMPCUT_INSTALLER";
+HHOOK g_hLowLevelKeyHook;
+string JC_SINGLE_SEARCH_ITEM = "";
 
 // main entry point 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow) {
@@ -33,7 +33,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	snprintf(JC_HISTORY_FILE, PATH_STR_SIZE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
 	snprintf(JC_CONFIG_FILE, PATH_STR_SIZE, "%s\\.jc_config.txt", JC_USERS_HOME_DIRECTORY);
 
-	globalInstance = hInstance;
+	g_hLowLevelKeyHook = SetWindowsHookEx(WH_KEYBOARD_LL, global_keyboard_hook, GetModuleHandle(NULL), NULL);
+
+	JC_INSTANCE = hInstance;
 	LPWSTR* szArgList;
 	int argCount;
 
@@ -44,7 +46,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		return 0;
 	}
 
-	// #Ensure only one version of the app 
+	// Ensure only one version of the app 
 	if (jc_is_already_running()) return 0;
 
 	MSG msg;
@@ -73,10 +75,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 }
 
 ATOM register_class(HINSTANCE hInstance) {
+
 	WNDCLASSEX wcex;
-
 	wcex.cbSize = sizeof(WNDCLASSEX);
-
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = main_event_handler;
 	wcex.cbClsExtra = 0;
@@ -96,19 +97,19 @@ ATOM register_class(HINSTANCE hInstance) {
 BOOL init_instance(HINSTANCE hInstance, int nCmdShow) {
 	HICON hMainIcon;
 
-	globalHWND = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+	JC_MAIN_WINDOW = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-	if (!globalHWND) return FALSE;
+	if (!JC_MAIN_WINDOW) return FALSE;
 
-	jc_load_hotkeys(JC_CONFIG_FILE, globalHWND);
-	AddClipboardFormatListener(globalHWND);
+	jc_load_hotkeys_v2(JC_CONFIG_FILE, JC_MAIN_WINDOW);
+	AddClipboardFormatListener(JC_MAIN_WINDOW);
 	jc_load_history_file(JC_HISTORY_FILE);
 
 	hMainIcon = LoadIcon(hInstance, (LPCTSTR)MAKEINTRESOURCE(IDI_JUMPCUT));
 
 	nidApp.cbSize = sizeof(NOTIFYICONDATA);
-	nidApp.hWnd = (HWND)globalHWND;
+	nidApp.hWnd = (HWND)JC_MAIN_WINDOW;
 	nidApp.uID = IDI_JUMPCUT;
 	nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nidApp.hIcon = hMainIcon;
@@ -119,8 +120,25 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow) {
 	return TRUE;
 }
 
-
-
+// just a hackish way to intercept down key for the search dialog edit control
+LRESULT CALLBACK global_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	KBDLLHOOKSTRUCT* pkbhs = (KBDLLHOOKSTRUCT*)lParam;
+	if (nCode == HC_ACTION && wParam == WM_KEYUP)
+	{
+		//jc_alert(to_string(pkbhs->vkCode));
+		if (pkbhs->vkCode == VK_DOWN) {
+			HWND wnd = GetFocus();
+			if (!hwnd_to_string(wnd).empty()) {
+				if (JC_SEARCH_DIALOG_LIST) {
+					SendMessage(JC_SEARCH_DIALOG_LIST, LB_SETCURSEL, 0, 0);
+					SetFocus(JC_SEARCH_DIALOG_LIST);
+				}
+			}
+		}
+	}
+	return CallNextHookEx(g_hLowLevelKeyHook, nCode, wParam, lParam);
+}
 BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam) {
 	//if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/) {
 	//	jc_log(hwnd_to_string(hwnd).c_str());
@@ -130,29 +148,134 @@ BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam) {
 	return TRUE;
 }
 
-
-LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK jc_search_handler(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int wmId, wmEvent;
-	POINT lpClickPoint;
+	UNREFERENCED_PARAMETER(lParam);
+	int wmId = LOWORD(wParam);
+	int wmEvent = HIWORD(wParam);
+	HWND hSearchEdit = GetDlgItem(hDlg, IDC_EDIT1);
+	JC_SEARCH_DIALOG_LIST = GetDlgItem(hDlg, IDC_LIST_SEARCH_RESULTS);
 
 	switch (message)
 	{
+
+	case WM_INITDIALOG: {
+		center_window(hDlg);
+		SetFocus(hSearchEdit);
+
+		if (JC_SEARCH_DIALOG_LIST != NULL) {
+			for (auto str : JC_CLIPBOARD_HISTORY) {
+				SendMessage(JC_SEARCH_DIALOG_LIST, LB_ADDSTRING, 0, (LPARAM)jc_charToCWSTR(str.c_str()));
+			}
+		}
+		return (INT_PTR)FALSE;
+	}
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDOK)
+		{
+			string str = get_selected_listbox_text(JC_SEARCH_DIALOG_LIST);
+			if (!str.empty()) jc_set_clipboard(str, JC_MAIN_WINDOW);
+			else {
+				// If search results only has one entry then use that as the clipboard entry
+				if (!JC_SINGLE_SEARCH_ITEM.empty())
+				{
+					jc_set_clipboard(JC_SINGLE_SEARCH_ITEM,JC_MAIN_WINDOW);
+					JC_SINGLE_SEARCH_ITEM = "";
+				}
+			}
+			ShowWindow(hDlg, SW_HIDE);
+			//EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+
+		else if (LOWORD(wParam) == IDCANCEL)
+		{
+			//EndDialog(hDlg, LOWORD(wParam));
+			ShowWindow(hDlg, SW_HIDE);
+			return (INT_PTR)TRUE;
+		}
+
+		else if (HIWORD(wParam) == EN_CHANGE)
+		{
+			TCHAR text[256];
+			int count = 0;
+			SendMessage(hSearchEdit, WM_GETTEXT, sizeof(text) / sizeof(text[0]), LPARAM(text));
+			string search_term = jc_CWSTRToString(text);
+			SendMessage(JC_SEARCH_DIALOG_LIST, LB_RESETCONTENT, 0, 0);
+			for (auto str : JC_CLIPBOARD_HISTORY)
+			{
+				if (case_insensitive_find(str, search_term))
+				{
+					count++;
+					JC_SINGLE_SEARCH_ITEM = str;
+					SendMessage(JC_SEARCH_DIALOG_LIST, LB_ADDSTRING, 0, (LPARAM)jc_charToCWSTR(str.c_str()));
+				}
+			}
+			// If there is only a single item, set this global variable 
+			// so we can use it when enter is hit on the search dialog
+			if (count != 1)
+			{
+				JC_SINGLE_SEARCH_ITEM = "";
+			}
+		}
+		else if (HIWORD(wParam) == LBN_DBLCLK)
+		{
+			string str = get_selected_listbox_text(JC_SEARCH_DIALOG_LIST);
+			if (!str.empty()) {
+				jc_set_clipboard(str, JC_MAIN_WINDOW);
+				ShowWindow(hDlg, SW_HIDE);
+				//EndDialog(hDlg, LOWORD(wParam));
+				return (INT_PTR)TRUE;
+			}
+		}
+
+		break;
+	}
+	return (INT_PTR)FALSE;
+}
+void jc_show_search_dialog()
+{
+	if (JC_SEARCH_WINDOW)
+	{
+		ShowWindow(JC_SEARCH_WINDOW, SW_SHOW);
+	}
+	else
+	{
+		if (!DialogBox(JC_INSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), JC_MAIN_WINDOW, jc_search_handler))
+		{
+			jc_error_and_exit(jc_charToCWSTR("rsearch"));
+		}
+		JC_SEARCH_WINDOW = GetForegroundWindow();
+	}
+}
+LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	int wmId = LOWORD(wParam);
+	int wmEvent = HIWORD(wParam);
+
+	switch (message) {
 	case WM_HOTKEY:
-		GetCursorPos(&lpClickPoint);
-		hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance, false);
-		return TRUE;
+		if (wmId == JC_MENU_HOTKEY) {
+			POINT lpClickPoint;
+			GetCursorPos(&lpClickPoint);
+			hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, JC_INSTANCE, false);
+			return TRUE;
+		}
+		else if (wmId == JC_SEARCH_HOTKEY)
+		{
+			jc_show_search_dialog();
+			return TRUE;
+		}
 		break;
 	case WM_CLIPBOARDUPDATE: {
-		std::string clip = jc_get_clipboard(hWnd);
+		string clip = jc_get_clipboard(hWnd);
 		if (!clip.empty() && clip != JC_LAST_CLIPBOARD_ENTRY) {
-			std::pair<bool, int> result = find_in_collection(JC_CLIPBOARD_HISTORY, clip);
+			pair<bool, int> result = find_in_collection(JC_CLIPBOARD_HISTORY, clip);
 			if (result.first) move_item_to_tail(JC_CLIPBOARD_HISTORY, result.second);
 			else {
 				if (JC_CLIPBOARD_HISTORY.size() + 1 > JC_MAX_HISTORY_SIZE) JC_CLIPBOARD_HISTORY.pop_front();
 				JC_CLIPBOARD_HISTORY.push_back(clip);
 				jc_history(clip.c_str());
-				jc_log(clip.c_str());
 				JC_LAST_CLIPBOARD_ENTRY = clip;
 			}
 		}
@@ -170,32 +293,31 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		{
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
+			POINT lpClickPoint;
 			GetCursorPos(&lpClickPoint);
-			hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, globalInstance, true);
+			hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, JC_INSTANCE, true);
 			return TRUE;
 		}
 		break;
 	case WM_COMMAND:
-		wmId = LOWORD(wParam);
-		wmEvent = HIWORD(wParam);
 
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			DialogBox(globalInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, jc_show_about_dialog);
+			DialogBox(JC_INSTANCE, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, jc_show_about_dialog);
 			break;
-		case IDM_RSEARCH:
-			DialogBox(globalInstance, MAKEINTRESOURCE(IDD_RSEARCH), hWnd, jc_show_rsearch_dialog);
+		case IDM_RSEARCH: {
+			jc_show_search_dialog();
 			break;
+		}
 		case IDM_EXIT:
 			Shell_NotifyIcon(NIM_DELETE, &nidApp);
 			DestroyWindow(hWnd);
 			break;
 		default: {
-
 			int idx = wmId - JC_MENU_ID_BASE;
 			if (idx >= 0 && idx < JC_CLIPBOARD_HISTORY.size()) {
-				std::string item = JC_CLIPBOARD_HISTORY[idx];
+				string item = JC_CLIPBOARD_HISTORY[idx];
 				jc_set_clipboard(item, hWnd);
 				SetForegroundWindow(callingWindowHWND);
 				EnumChildWindows(callingWindowHWND, jc_try_and_paste_to_other_app, NULL);

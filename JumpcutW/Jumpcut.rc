@@ -76,12 +76,13 @@ BEGIN
     LTEXT           "JumpcutW is licensed uner the MIT License by Charles Sanders.",IDC_STATIC,9,108,137,18,SS_NOPREFIX
 END
 
-IDD_RSEARCH DIALOGEX 22, 17, 228, 18
+IDD_RSEARCH DIALOGEX 22, 17, 229, 98
 STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Clipboard History Search"
 FONT 12, "DejaVu Sans Condensed", 400, 0, 0x0
 BEGIN
-    COMBOBOX        IDC_SEARCH_RESULTS,3,4,222,227,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_RICHEDIT21,"RichEdit20W",WS_TABSTOP | 0x81,2,4,225,13
+    CONTROL         "",IDC_TREE1,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,3,20,225,76
 END
 
 
@@ -99,7 +100,8 @@ BEGIN
 
     IDD_RSEARCH, DIALOG
     BEGIN
-        RIGHTMARGIN, 183
+        RIGHTMARGIN, 228
+        BOTTOMMARGIN, 96
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -127,6 +129,60 @@ END
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDHELP DIALOGEX 0, 0, 310, 179
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Search"
+FONT 11, "Nirmala UI", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,200,158,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,253,158,50,14
+    CONTROL         "",IDC_SEARCH_BOX,"RichEdit20W",WS_BORDER | WS_TABSTOP | 0x81,7,7,296,11
+    CONTROL         "",IDC_TREE1,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,22,296,132
+END
+
+IDD_DIALOG1 DIALOGEX 0, 0, 311, 179
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Search"
+FONT 10, "Microsoft YaHei", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,254,158,50,14
+    EDITTEXT        IDC_EDIT1,7,7,297,14,ES_CENTER | ES_AUTOHSCROLL
+    LISTBOX         IDC_LIST_SEARCH_RESULTS,7,25,297,126,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDHELP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 172
+    END
+
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 304
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 172
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
