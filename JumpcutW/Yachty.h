@@ -550,9 +550,6 @@ void center_window(HWND hWnd)
 	SetWindowPos(hWnd, 0, xPos, yPos, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
-string get_solo_listbox_text(HWND hSearchResultsList) {
-
-}
 string get_selected_listbox_text(HWND hSearchResultsList) {
 	int itemIndex = (int)SendMessage(hSearchResultsList, LB_GETCURSEL, (WPARAM)0, (LPARAM)0);
 	if (itemIndex == LB_ERR)

@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "Jumpcut.h"
+#include "Yachty.h"
 #include <stdio.h>
 #include "resource.h"
 
@@ -20,6 +20,7 @@ BOOL bDisable = FALSE;
 HWND hwndNextViewer;
 HWND callingWindowHWND;
 string JUMPCUT_INSTALLER_STRING = "JUMPCUT_INSTALLER";
+string JUMPCUT_INSTALLER_STRING_V2 = "/ Commit";
 HHOOK g_hLowLevelKeyHook;
 string JC_SINGLE_SEARCH_ITEM = "";
 
@@ -41,7 +42,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
 	// This is for spawning a clone of this app on install, otherwise the installer hangs
-	if (argCount == 2 && szArgList != NULL && jc_CWSTRToString(szArgList[1]) == JUMPCUT_INSTALLER_STRING) {
+	if (argCount == 2 && szArgList != NULL && (
+		jc_CWSTRToString(szArgList[1]) == JUMPCUT_INSTALLER_STRING ||
+		jc_CWSTRToString(szArgList[1]) == JUMPCUT_INSTALLER_STRING_V2)) {
+
 		jc_start_external_application(szArgList[0]);
 		return 0;
 	}
@@ -179,7 +183,7 @@ INT_PTR CALLBACK jc_search_handler(HWND hDlg, UINT message, WPARAM wParam, LPARA
 				// If search results only has one entry then use that as the clipboard entry
 				if (!JC_SINGLE_SEARCH_ITEM.empty())
 				{
-					jc_set_clipboard(JC_SINGLE_SEARCH_ITEM,JC_MAIN_WINDOW);
+					jc_set_clipboard(JC_SINGLE_SEARCH_ITEM, JC_MAIN_WINDOW);
 					JC_SINGLE_SEARCH_ITEM = "";
 				}
 			}

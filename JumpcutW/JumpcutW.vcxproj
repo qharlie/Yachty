@@ -22,7 +22,7 @@
     <ProjectGuid>{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}</ProjectGuid>
     <RootNamespace>SysTrayDemo</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <ProjectName>JumpcutW</ProjectName>
+    <ProjectName>YachtyW</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -153,20 +153,20 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Jumpcut.cpp" />
+    <ClCompile Include="Yachty.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Jumpcut.h" />
+    <ClInclude Include="Yachty.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="docicon.png" />
     <Image Include="small.ico" />
-    <Image Include="Jumpcut.ico" />
+    <Image Include="Yachty.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Jumpcut.rc" />
+    <ResourceCompile Include="Yachty.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

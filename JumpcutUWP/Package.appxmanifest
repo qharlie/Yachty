@@ -9,12 +9,12 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="35363TheCharlieCompany.Jumpcut"
+    Name="35363TheCharlieCompany.yachty"
     Publisher="CN=283133A9-7713-48E1-B1C7-6333DC9B0261"
-    Version="1.18.20.0" />
+    Version="1.2.27.0" />
 
   <Properties>
-    <DisplayName>Jumpcut</DisplayName>
+    <DisplayName>yachty</DisplayName>
     <PublisherDisplayName>The Charlie Company</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
@@ -33,12 +33,16 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="Jumpcut"
-        Description="JumpcutUWP"
+        DisplayName="Yachty"
+        Description="YachtyUWP"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" />
+        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  Square310x310Logo="Images\Square310x310Logo.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
         <uap:SplashScreen Image="Images\SplashScreen.png" />
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="landscape"/>

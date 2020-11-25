@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JumpcutW", "JumpcutW\JumpcutW.vcxproj", "{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YachtyW", "JumpcutW\JumpcutW.vcxproj", "{CCE3447F-FBF5-4175-B6B1-0F5520D095D9}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "JumpcutUWP", "JumpcutUWP\JumpcutUWP.wapproj", "{72AE7BD6-F8C9-444C-8E58-A846B2257926}"
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "YachtyUWP", "JumpcutUWP\YachtyUWP.wapproj", "{72AE7BD6-F8C9-444C-8E58-A846B2257926}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{67272F34-8EA5-47A2-B30D-7FA8E88E4A7A}"
 EndProject
