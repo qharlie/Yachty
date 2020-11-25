@@ -12,6 +12,8 @@ Yachty is a Yet Another Clipboard History Tool.  Features include global hot key
 
 ![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/screenshot2.png?raw=true)
 
+![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/screenshot4.png?raw=true)
+
 Yachty is a windows clone of the famous Jumpcut for MacOS https://snark.github.io/jumpcut/ .
 
 # Installing
