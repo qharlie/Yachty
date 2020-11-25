@@ -26,9 +26,9 @@ Build from Source :
 
 With Windows 10 you have to tell it which icons you want visible, hit Start->Type "Taskbar Settings", Scroll Down untill you find the phrase "Select which icons appear on the taskbar", and toggle Yachty.exe to ON.
 
-![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/toolbar1.png?raw=true)
+![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/screenshot6.png?raw=true)
 
-![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/toolbar2.png?raw=true)
+![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/screenshot7.png?raw=true)
 
-![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/toolbar3.png?raw=true)
+![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/screenshot8.png?raw=true)
 
