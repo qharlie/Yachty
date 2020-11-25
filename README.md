@@ -4,7 +4,7 @@
 </p>
 
 <p>
-Yachty is a Yet Another Clipboard History Tool.  Features include global hot keys for a menu of all clipboard history ( default: control+alt+shift+e ) , and another for searching through the history ( default: control+alt+shift+r ).  Both are configurable in ~/.jc_config.txt
+Yachty is a clipboard history tool that aims to be intuitive.  Features include global hot keys for a menu of all clipboard history ( default: control+alt+shift+e ) , and another for searching through the history ( default: control+alt+shift+r ).  Both are configurable in ~/.jc_config.txt
 </p>
 
 
