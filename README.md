@@ -1,6 +1,6 @@
 
-<p align = "center">
-<img src = "https://github.com/qorrect/Yachty/blob/main/Assets/logo.png" height = "200" / >
+<p align="center">
+<img src="https://github.com/qorrect/Yachty/blob/main/JumpcutUWP/Images/banner620x300.png" height="200"/>
 </p>
 
 <p>
@@ -8,9 +8,9 @@ Yachty is a Yet Another Clipboard History Tool.  Features include global hot key
 </p>
 
 
-![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/sreenshot1.png?raw=true)
+![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/screenshot1.png?raw=true)
 
-![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/sreenshot2.png?raw=true)
+![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/screenshot2.png?raw=true)
 
 Yachty is a windows clone of the famous Jumpcut for MacOS https://snark.github.io/jumpcut/ .
 
