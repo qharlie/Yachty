@@ -8,7 +8,7 @@ Yachty is a clipboard history tool that aims to be intuitive.  Features include 
 </p>
 <p>
   
-Windows Store    : https://www.microsoft.com/en-us/p/yachty/9nghml40vfr1
+<b>Windows Store</b>    : https://www.microsoft.com/en-us/p/yachty/9nghml40vfr1 <br>
 Windows Installer: https://github.com/qorrect/Yachty/blob/main/Binaries/YachtyInstaller.msi?raw=true
 
 </p>
@@ -22,7 +22,7 @@ Windows Installer: https://github.com/qorrect/Yachty/blob/main/Binaries/YachtyIn
 Yachty is a windows clone of the famous Jumpcut for MacOS https://snark.github.io/jumpcut/ .
 
 # Build from Source :
--You'll need the free Visual Studio Community Edition 2019.  Clone this project, open Yachty.sln and click Build to generate Yachty.exe.
+-You'll need the free Visual Studio Community Edition 2019.  Clone this project, open Yachty.sln and click Build to generate YachtyW.exe.
 
 
 # Ensuring Yachty stays visible in the Task Tray
