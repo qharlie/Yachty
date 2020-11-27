@@ -105,7 +105,6 @@
     <Content Include="Images\Square150x150Logo.scale-200.png" />
     <Content Include="Images\Square44x44Logo.scale-200.png" />
     <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Images\StoreLogo.png" />
     <Content Include="Images\Wide310x150Logo.scale-200.png" />
     <Content Include="Images\Square150x150Logo.scale-100.png" />
     <Content Include="Images\Square150x150Logo.scale-400.png" />
@@ -115,6 +114,12 @@
     <Content Include="Images\Square44x44Logo.scale-100.png" />
     <Content Include="Images\Square44x44Logo.scale-400.png" />
     <Content Include="Images\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Square44x44Logo.targetsize-48.png" />
+    <Content Include="StoreLogo.scale-100.png" />
+    <Content Include="StoreLogo.scale-125.png" />
+    <Content Include="StoreLogo.scale-150.png" />
+    <Content Include="StoreLogo.scale-200.png" />
+    <Content Include="StoreLogo.scale-400.png" />
     <Content Include="Wide310x150Logo.scale-100.png" />
     <Content Include="Wide310x150Logo.scale-400.png" />
     <None Include="JumpcutUWP_Key.pfx" />

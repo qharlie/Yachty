@@ -27,19 +27,20 @@ char          JC_LOG_FILE[PATH_STR_SIZE];
 char          JC_HISTORY_FILE[PATH_STR_SIZE];
 char          JC_CONFIG_FILE[PATH_STR_SIZE];
 const int     JC_MAX_MENU_LABEL_LENGTH = 65;
-const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
-const char* JS_WHITESPACE = " \t\n\r\f\v";
+const char*   JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
+const char*   JS_WHITESPACE = " \t\n\r\f\v";
 const UINT    JC_MAX_RETRY_COUNT = 5;
 const UINT    JC_MAX_HISTORY_SIZE = 25;
 const int     JC_MENU_ID_BASE = 2000;
-const char* JC_APPLICATION_NAME = "JumpcutW_v1.2";
+const char*   JC_APPLICATION_NAME = "YachtyW_v1.2";
 HINSTANCE     JC_INSTANCE;
 HWND          JC_MAIN_WINDOW;
-HWND		  JC_SEARCH_WINDOW;
+HWND		  JC_SEARCH_DIALOG;
 HWND          JC_SEARCH_DIALOG_LIST;
 string        JC_LAST_CLIPBOARD_ENTRY;
 deque<string> JC_CLIPBOARD_HISTORY;
-
+string		  JC_MENU_HOTKEY_STRING = "";
+string		  JC_SEARCH_HOTKEY_STRING = "";
 
 bool replace(string& str, const string& from, const string& to) {
 	size_t start_pos = str.find(from);
@@ -203,7 +204,7 @@ pair<bool, int > find_in_collection(const deque<T>& vecOfElements, const T& elem
 }
 
 
-BOOL jc_wait_on_clipboard(HWND hWnd, int maxRetryCount = JC_MAX_RETRY_COUNT)
+BOOL inline jc_wait_on_clipboard(HWND hWnd, int maxRetryCount = JC_MAX_RETRY_COUNT)
 {
 	BOOL success = false;
 	int counter = 0;
@@ -382,13 +383,16 @@ void jc_load_hotkeys_v2(char* config_path, HWND hwnd) {
 	if (config.count("menu") >= 1) {
 		// Load it 
 		string menu = config["menu"];
+		JC_MENU_HOTKEY_STRING = menu;
 		auto code = jc_get_key_codes(menu);
 		if (!RegisterHotKey(hwnd, JC_MENU_HOTKEY, code.modifiers, code.key)) jc_log("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it.");
 
 	}
 	else {
 		// Set defaults
-		string key_chord = "control+alt+shift+r";
+		string key_chord = "control+alt+shift+e";
+		JC_MENU_HOTKEY_STRING = key_chord;
+
 		jc_append_file(config_path, string("menu=" + key_chord).c_str());
 		auto code = jc_get_key_codes(key_chord);
 		if (!RegisterHotKey(hwnd, JC_MENU_HOTKEY, code.modifiers, code.key)) jc_log("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it.");
@@ -397,6 +401,8 @@ void jc_load_hotkeys_v2(char* config_path, HWND hwnd) {
 	{
 		// Load it 
 		string menu = config["search"];
+		JC_SEARCH_HOTKEY_STRING = menu;
+
 		auto code = jc_get_key_codes(menu);
 		if (!RegisterHotKey(hwnd, JC_SEARCH_HOTKEY, code.modifiers, code.key)) jc_log("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it.");
 
@@ -404,7 +410,9 @@ void jc_load_hotkeys_v2(char* config_path, HWND hwnd) {
 	else
 	{
 		// Set defaults
-		string key_chord = "control+alt+shift+e";
+		string key_chord = "control+alt+shift+r";
+		JC_SEARCH_HOTKEY_STRING = key_chord;
+
 		jc_append_file(config_path, string("search=" + key_chord).c_str());
 		auto code = jc_get_key_codes(key_chord);
 		if (!RegisterHotKey(hwnd, JC_SEARCH_HOTKEY, code.modifiers, code.key)) jc_log("Couldnt register hotkey bailing out.  Might be ~/.jc_config.txt , valid values are control,alt,shift,windows,A-za-z,F1-F12,0-9 strung togther with '+' and thats it.");
@@ -494,9 +502,13 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 		if (JC_CLIPBOARD_HISTORY.size() > 0)
 			InsertMenu(hPopMenu, 0xFFFFFFFF, MF_SEPARATOR, IDM_SEP, _T("SEP"));
 
-		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("About JumpcutW"));
+		string menu_shortcut_string = "Shortcut for menu is [" + JC_MENU_HOTKEY_STRING + "]";
+		string search_shortcut_string = "Shortcut for search is [" + JC_SEARCH_HOTKEY_STRING + "]";
+
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, jc_charToCWSTR(menu_shortcut_string.c_str()));
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, jc_charToCWSTR(search_shortcut_string.c_str()));
 		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_RSEARCH, _T("Search"));
-		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit  JumpcutW"));
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit"));
 
 	}
 	SetForegroundWindow(hWnd);
@@ -586,3 +598,4 @@ BOOLEAN jc_is_already_running() {
 		return 1;
 	}
 }
+

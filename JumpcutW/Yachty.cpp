@@ -20,7 +20,7 @@ BOOL bDisable = FALSE;
 HWND hwndNextViewer;
 HWND callingWindowHWND;
 string JUMPCUT_INSTALLER_STRING = "JUMPCUT_INSTALLER";
-string JUMPCUT_INSTALLER_STRING_V2 = "/ Commit";
+string JUMPCUT_INSTALLER_STRING_V2 = "/Commit";
 HHOOK g_hLowLevelKeyHook;
 string JC_SINGLE_SEARCH_ITEM = "";
 
@@ -140,6 +140,16 @@ LRESULT CALLBACK global_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam)
 				}
 			}
 		}
+
+		else if (pkbhs->vkCode == VK_RETURN)
+		{
+			string str = get_selected_listbox_text(JC_SEARCH_DIALOG_LIST);
+			if (!str.empty()) {
+				jc_set_clipboard(str, JC_MAIN_WINDOW);
+				ShowWindow(JC_SEARCH_DIALOG, SW_HIDE);
+				//EndDialog(hDlg, LOWORD(wParam));
+			}
+		}
 	}
 	return CallNextHookEx(g_hLowLevelKeyHook, nCode, wParam, lParam);
 }
@@ -187,6 +197,7 @@ INT_PTR CALLBACK jc_search_handler(HWND hDlg, UINT message, WPARAM wParam, LPARA
 					JC_SINGLE_SEARCH_ITEM = "";
 				}
 			}
+			jc_alert("ok");
 			ShowWindow(hDlg, SW_HIDE);
 			//EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
@@ -195,6 +206,7 @@ INT_PTR CALLBACK jc_search_handler(HWND hDlg, UINT message, WPARAM wParam, LPARA
 		else if (LOWORD(wParam) == IDCANCEL)
 		{
 			//EndDialog(hDlg, LOWORD(wParam));
+			jc_alert("ccancel");
 			ShowWindow(hDlg, SW_HIDE);
 			return (INT_PTR)TRUE;
 		}
@@ -239,18 +251,11 @@ INT_PTR CALLBACK jc_search_handler(HWND hDlg, UINT message, WPARAM wParam, LPARA
 }
 void jc_show_search_dialog()
 {
-	if (JC_SEARCH_WINDOW)
-	{
-		ShowWindow(JC_SEARCH_WINDOW, SW_SHOW);
-	}
-	else
-	{
-		if (!DialogBox(JC_INSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), JC_MAIN_WINDOW, jc_search_handler))
-		{
-			jc_error_and_exit(jc_charToCWSTR("rsearch"));
-		}
-		JC_SEARCH_WINDOW = GetForegroundWindow();
-	}
+	if (!JC_SEARCH_DIALOG)
+		JC_SEARCH_DIALOG = CreateDialog(JC_INSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), JC_MAIN_WINDOW, jc_search_handler);
+
+	ShowWindow(JC_SEARCH_DIALOG, SW_SHOW);
+
 }
 LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

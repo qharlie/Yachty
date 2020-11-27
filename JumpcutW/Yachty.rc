@@ -38,7 +38,7 @@ IDI_JUMPCUT             ICON                    "Yachty.ico"
 
 IDC_JUMPCUT MENU
 BEGIN
-    POPUP "Jumpcut"
+    POPUP "Yachty"
     BEGIN
         MENUITEM "&About ...",                  IDM_ABOUT
         MENUITEM "E&xit",                       IDM_EXIT
@@ -65,15 +65,15 @@ END
 
 IDD_ABOUTBOX DIALOGEX 22, 17, 163, 154
 STYLE DS_SETFONT | WS_CAPTION | WS_SYSMENU
-CAPTION "Jumpcut For Windows"
+CAPTION "Yachty For Windows"
 FONT 14, "Verdana", 400, 0, 0x0
 BEGIN
-    CONTROL         "JumpcutW v1.17",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,52,14,55,8
+    CONTROL         "Yachty v1.2",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | SS_CENTERIMAGE | WS_GROUP,60,14,41,8
     DEFPUSHBUTTON   "OK",IDOK,121,135,30,11,WS_GROUP
     LTEXT           "This is a windows rewrite of Jumpcut for MacOS https://snark.github.io/jumpcut",IDC_STATIC,9,88,139,18,SS_NOPREFIX
-    LTEXT           "JumcuptW records your clipboard history and makes it accessible by left clicking the JumpcutW icon.",IDC_STATIC,9,29,134,25,SS_NOPREFIX,WS_EX_TRANSPARENT
+    LTEXT           "Yachty records your clipboard history and makes it accessible by left clicking the Yachty icon.",IDC_STATIC,9,29,134,25,SS_NOPREFIX,WS_EX_TRANSPARENT
     LTEXT           "Selecting an item will copy that value to the current clipboard.",IDC_STATIC,9,59,138,18,SS_NOPREFIX
-    LTEXT           "JumpcutW is licensed uner the MIT License by Charles Sanders.",IDC_STATIC,9,108,137,18,SS_NOPREFIX
+    LTEXT           "Yachty is licensed uner the MIT License by Charles Sanders.",IDC_STATIC,9,108,137,18,SS_NOPREFIX
 END
 
 IDD_RSEARCH DIALOGEX 22, 17, 229, 98
@@ -114,9 +114,9 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_APP_TITLE           "JUMPCUT"
-    IDS_APPTOOLTIP          "Jumpcut"
-    IDC_JUMPCUT             "JUMPCUT"
+    IDS_APP_TITLE           "YACHTY"
+    IDS_APPTOOLTIP          "Yachty"
+    IDC_JUMPCUT             "YACHTY"
 END
 
 #endif    // English resources

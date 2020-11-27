@@ -15,26 +15,8 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_0FFA89EF508CFC52ACFC7C91E4CA681E"
-        "OwnerKey" = "8:_2012E32E88A84C259E92EC81B0EC3CFF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2012E32E88A84C259E92EC81B0EC3CFF"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_2BC325953433A273B196CB8FDEC0048A"
-        "OwnerKey" = "8:_2012E32E88A84C259E92EC81B0EC3CFF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8BFCCFCEB6DDEEE01D7EBF173F4D7981"
-        "OwnerKey" = "8:_2012E32E88A84C259E92EC81B0EC3CFF"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -77,7 +59,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\JumpcutWInstaller.msi"
+        "OutputFilename" = "8:Release\\YachtyInstaller.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -138,66 +120,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0FFA89EF508CFC52ACFC7C91E4CA681E"
-            {
-            "SourcePath" = "8:VCRUNTIME140D.dll"
-            "TargetName" = "8:VCRUNTIME140D.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_F4094A3CA7CC4E75A8D9F1A5C12F650B"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2BC325953433A273B196CB8FDEC0048A"
-            {
-            "SourcePath" = "8:MSVCP140D.dll"
-            "TargetName" = "8:MSVCP140D.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_F4094A3CA7CC4E75A8D9F1A5C12F650B"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8BFCCFCEB6DDEEE01D7EBF173F4D7981"
-            {
-            "SourcePath" = "8:ucrtbased.dll"
-            "TargetName" = "8:ucrtbased.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_F4094A3CA7CC4E75A8D9F1A5C12F650B"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
@@ -255,7 +177,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:JumpcutW"
         "ProductCode" = "8:{F3CA8B18-1C29-4FA4-AC64-611EF0FE59F2}"
-        "PackageCode" = "8:{3CA2D32A-B411-463C-AADA-0ABE899D153E}"
+        "PackageCode" = "8:{54415C27-CCDC-4377-88DF-B4D57C870DB2}"
         "UpgradeCode" = "8:{D8BC3CE6-8CE1-4BB6-B59C-306F3199BA11}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -804,7 +726,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2012E32E88A84C259E92EC81B0EC3CFF"
             {
-            "SourcePath" = "8:..\\Debug\\YachtyW.exe"
+            "SourcePath" = "8:..\\Release\\YachtyW.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_F4094A3CA7CC4E75A8D9F1A5C12F650B"
