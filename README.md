@@ -6,8 +6,11 @@
 <p>
 Yachty is a clipboard history tool that aims to be intuitive.  Features include global hot keys for a menu of all clipboard history ( default: control+alt+shift+e ) , and another for searching through the history ( default: control+alt+shift+r ).  Both are configurable in ~/.jc_config.txt and displayed in the menu.
 </p>
-![Install from Microsoft Store](https://www.microsoft.com/en-us/p/yachty/9nghml40vfr1)
-![Install from Installer](https://github.com/qorrect/Yachty/blob/main/Binaries/YachtyInstaller.msi?raw=true)
+<p>
+Windows Store    : https://www.microsoft.com/en-us/p/yachty/9nghml40vfr1
+
+Windows Installer: https://github.com/qorrect/Yachty/blob/main/Binaries/YachtyInstaller.msi?raw=true
+</p>
 
 ![Screenshot](https://github.com/qorrect/Yachty/blob/main/Assets/screenshot1.png?raw=true)
 
@@ -17,9 +20,7 @@ Yachty is a clipboard history tool that aims to be intuitive.  Features include 
 
 Yachty is a windows clone of the famous Jumpcut for MacOS https://snark.github.io/jumpcut/ .
 
-# Installing
-
-Build from Source :
+# Build from Source :
 -You'll need the free Visual Studio Community Edition 2019.  Clone this project, open Yachty.sln and click Build to generate Yachty.exe.
 
 
