@@ -100,6 +100,8 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BadgeLogo.scale-200.png" />
+    <Content Include="BadgeLogo.scale-400.png" />
     <Content Include="Images\SplashScreen.scale-200.png" />
     <Content Include="Images\LockScreenLogo.scale-200.png" />
     <Content Include="Images\Square150x150Logo.scale-200.png" />
@@ -114,6 +116,13 @@
     <Content Include="Images\Square44x44Logo.scale-100.png" />
     <Content Include="Images\Square44x44Logo.scale-400.png" />
     <Content Include="Images\Square44x44Logo.targetsize-256.png" />
+    <Content Include="SplashScreen.scale-100.png" />
+    <Content Include="Images\Square200x200Logo.png" />
+    <Content Include="Images\Square200x200Logo.scale-100.png" />
+    <Content Include="Images\Square200x200Logo.scale-125.png" />
+    <Content Include="Images\Square200x200Logo.scale-150.png" />
+    <Content Include="Images\Square200x200Logo.scale-200.png" />
+    <Content Include="Images\Square200x200Logo.scale-400.png" />
     <Content Include="Square44x44Logo.targetsize-48.png" />
     <Content Include="StoreLogo.scale-100.png" />
     <Content Include="StoreLogo.scale-125.png" />
