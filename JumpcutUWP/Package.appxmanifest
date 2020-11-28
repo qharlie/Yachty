@@ -11,7 +11,7 @@
   <Identity
     Name="35363TheCharlieCompany.yachty"
     Publisher="CN=283133A9-7713-48E1-B1C7-6333DC9B0261"
-    Version="1.2.34.0" />
+    Version="1.2.36.0" />
 
   <Properties>
     <DisplayName>yachty</DisplayName>

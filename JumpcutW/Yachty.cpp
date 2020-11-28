@@ -197,7 +197,6 @@ INT_PTR CALLBACK jc_search_handler(HWND hDlg, UINT message, WPARAM wParam, LPARA
 					JC_SINGLE_SEARCH_ITEM = "";
 				}
 			}
-			jc_alert("ok");
 			ShowWindow(hDlg, SW_HIDE);
 			//EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
@@ -206,7 +205,6 @@ INT_PTR CALLBACK jc_search_handler(HWND hDlg, UINT message, WPARAM wParam, LPARA
 		else if (LOWORD(wParam) == IDCANCEL)
 		{
 			//EndDialog(hDlg, LOWORD(wParam));
-			jc_alert("ccancel");
 			ShowWindow(hDlg, SW_HIDE);
 			return (INT_PTR)TRUE;
 		}
