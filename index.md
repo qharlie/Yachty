@@ -1,6 +1,6 @@
 
 <p align="center">
-<img src="https://github.com/qorrect/Yachty/blob/main/JumpcutUWP/Images/banner620x300.png" height="200"/>
+<img src="https://github.com/qorrect/Yachty/blob/main/JumpcutUWP/Images/banner620x300.png?raw=true" height="200"/>
 </p>
 
 <p>
