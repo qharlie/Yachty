@@ -491,7 +491,6 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 	int idx = max(0, JC_CLIPBOARD_HISTORY.size() - JC_MAX_HISTORY_SIZE);
 	for (idx; idx < JC_CLIPBOARD_HISTORY.size(); idx++)
 	{
-		//if (idx > JC_MAX_HISTORY_SIZE) break;
 		string item = JC_CLIPBOARD_HISTORY[idx];
 		string label = trim(item);
 		label.resize(min(item.length(), JC_MAX_MENU_LABEL_LENGTH));
