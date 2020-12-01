@@ -17,6 +17,10 @@
 #define JC_MENU_HOTKEY 9000
 #define JC_SEARCH_HOTKEY 9001
 
+#define JC_MENU_HOTKEY_MENU_ITEM 9002
+#define JC_SEARCH_HOTKEY_MENU_ITEM 9003
+
+
 #define MAX_LOADSTRING 100
 #define	WM_USER_SHELLICON WM_USER + 1
 #define PATH_STR_SIZE 65535
@@ -463,7 +467,7 @@ VOID jc_start_external_application(LPCTSTR lpApplicationName)
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
 
-	// start the program up
+	// idx the program up
 	CreateProcess(lpApplicationName,   // the path
 		NULL,        // Command line
 		NULL,           // Process handle not inheritable
@@ -484,10 +488,11 @@ VOID jc_start_external_application(LPCTSTR lpApplicationName)
 HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, bool showControls) {
 	UINT uFlag = MF_BYPOSITION | MF_STRING;
 	HMENU hPopMenu = CreatePopupMenu();
-	for (int i = 0; i < JC_CLIPBOARD_HISTORY.size(); i++)
+	int idx = max(0, JC_CLIPBOARD_HISTORY.size() - JC_MAX_HISTORY_SIZE);
+	for (idx; idx < JC_CLIPBOARD_HISTORY.size(); idx++)
 	{
-		if (i > JC_MAX_HISTORY_SIZE) break;
-		string item = JC_CLIPBOARD_HISTORY[i];
+		//if (idx > JC_MAX_HISTORY_SIZE) break;
+		string item = JC_CLIPBOARD_HISTORY[idx];
 		string label = trim(item);
 		label.resize(min(item.length(), JC_MAX_MENU_LABEL_LENGTH));
 		if (label.length() == JC_MAX_MENU_LABEL_LENGTH)
@@ -495,7 +500,7 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 			label += "...";
 		}
 		if (!item.empty())
-			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, i + JC_MENU_ID_BASE, jc_charToCWSTR(label.c_str()));
+			InsertMenu(hPopMenu, 0xFFFFFFFF, uFlag, idx + JC_MENU_ID_BASE, jc_charToCWSTR(label.c_str()));
 	}
 
 	if (showControls) {
@@ -505,8 +510,8 @@ HMENU jc_show_popup_menu(POINT& lpClickPoint, const HWND& hWnd, HINSTANCE inst, 
 		string menu_shortcut_string = "Shortcut for menu is [" + JC_MENU_HOTKEY_STRING + "]";
 		string search_shortcut_string = "Shortcut for search is [" + JC_SEARCH_HOTKEY_STRING + "]";
 
-		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, jc_charToCWSTR(menu_shortcut_string.c_str()));
-		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_ABOUT, jc_charToCWSTR(search_shortcut_string.c_str()));
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, JC_MENU_HOTKEY_MENU_ITEM, jc_charToCWSTR(menu_shortcut_string.c_str()));
+		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, JC_SEARCH_HOTKEY_MENU_ITEM, jc_charToCWSTR(search_shortcut_string.c_str()));
 		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_RSEARCH, _T("Search"));
 		InsertMenu(hPopMenu, 0xFFFFFFFF, MF_BYPOSITION | MF_STRING, IDM_EXIT, _T("Exit"));
 

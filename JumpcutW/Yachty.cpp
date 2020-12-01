@@ -310,9 +310,11 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 		switch (wmId)
 		{
+
 		case IDM_ABOUT:
 			DialogBox(JC_INSTANCE, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, jc_show_about_dialog);
 			break;
+		case JC_SEARCH_HOTKEY_MENU_ITEM:
 		case IDM_RSEARCH: {
 			jc_show_search_dialog();
 			break;
