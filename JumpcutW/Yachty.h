@@ -31,12 +31,12 @@ char          JC_LOG_FILE[PATH_STR_SIZE];
 char          JC_HISTORY_FILE[PATH_STR_SIZE];
 char          JC_CONFIG_FILE[PATH_STR_SIZE];
 const int     JC_MAX_MENU_LABEL_LENGTH = 65;
-const char*   JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
-const char*   JS_WHITESPACE = " \t\n\r\f\v";
+const char* JC_USERS_HOME_DIRECTORY = getenv("USERPROFILE");
+const char* JS_WHITESPACE = " \t\n\r\f\v";
 const UINT    JC_MAX_RETRY_COUNT = 5;
 const UINT    JC_MAX_HISTORY_SIZE = 25;
 const int     JC_MENU_ID_BASE = 2000;
-const char*   JC_APPLICATION_NAME = "YachtyW_v1.2";
+const char* JC_APPLICATION_NAME = "YachtyW_v1.2";
 HINSTANCE     JC_INSTANCE;
 HWND          JC_MAIN_WINDOW;
 HWND		  JC_SEARCH_DIALOG;
@@ -237,7 +237,7 @@ void jc_set_clipboard(string item, HWND hWnd)
 		EmptyClipboard();
 		clipbuffer = GlobalAlloc(GMEM_DDESHARE, item.length() + 1);
 		buffer = (char*)GlobalLock(clipbuffer);
-		strcpy(buffer, item.c_str());
+		strncpy(buffer, item.c_str(), item.size());
 		GlobalUnlock(clipbuffer);
 		SetClipboardData(CF_TEXT, clipbuffer);
 		CloseClipboard();
@@ -280,8 +280,7 @@ void jc_load_history_file(string filePath) {
 	vector<string> lines;
 	JC_CLIPBOARD_HISTORY.clear();
 
-	if (read_file_as_lines(filePath, lines))
-	{
+	if (read_file_as_lines(filePath, lines)) {
 		int start_index = max(0, lines.size() - 50);
 		for (int count = 0; count < 50; count++)
 		{

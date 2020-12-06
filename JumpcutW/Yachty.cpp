@@ -11,19 +11,18 @@ BOOL init_instance(HINSTANCE, int);
 LRESULT CALLBACK main_event_handler(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK global_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam);
 // Global Variables
-NOTIFYICONDATA nidApp;
-HMENU hPopMenu;
-TCHAR szTitle[MAX_LOADSTRING];
-TCHAR szWindowClass[MAX_LOADSTRING];
-TCHAR szApplicationToolTip[MAX_LOADSTRING];
-BOOL bDisable = FALSE;
-HWND hwndNextViewer;
-HWND callingWindowHWND;
+NOTIFYICONDATA notifyIconData;
+HMENU JC_POPUP_HMENU;
+TCHAR APP_TITLE_STRING[MAX_LOADSTRING];
+TCHAR WINDOW_TITLE_STRING[MAX_LOADSTRING];
+TCHAR APPLICATION_TOOLTIP_STRING[MAX_LOADSTRING];
+HWND g_hwndNextViewer;
+HWND g_callingWindowHWND;
+HHOOK g_lowLevelKeyHook;
+
 string JUMPCUT_INSTALLER_STRING = "JUMPCUT_INSTALLER";
 string JUMPCUT_INSTALLER_STRING_V2 = "/Commit";
-HHOOK g_hLowLevelKeyHook;
 string JC_SINGLE_SEARCH_ITEM = "";
-
 // main entry point 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow) {
 
@@ -34,7 +33,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	snprintf(JC_HISTORY_FILE, PATH_STR_SIZE, "%s\\.jc_history.txt", JC_USERS_HOME_DIRECTORY);
 	snprintf(JC_CONFIG_FILE, PATH_STR_SIZE, "%s\\.jc_config.txt", JC_USERS_HOME_DIRECTORY);
 
-	g_hLowLevelKeyHook = SetWindowsHookEx(WH_KEYBOARD_LL, global_keyboard_hook, GetModuleHandle(NULL), NULL);
+	g_lowLevelKeyHook = SetWindowsHookEx(WH_KEYBOARD_LL, global_keyboard_hook, GetModuleHandle(NULL), NULL);
 
 	JC_INSTANCE = hInstance;
 	LPWSTR* szArgList;
@@ -56,8 +55,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MSG msg;
 	HACCEL hAccelTable;
 
-	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_JUMPCUT, szWindowClass, MAX_LOADSTRING);
+	LoadString(hInstance, IDS_APP_TITLE, APP_TITLE_STRING, MAX_LOADSTRING);
+	LoadString(hInstance, IDC_JUMPCUT, WINDOW_TITLE_STRING, MAX_LOADSTRING);
 
 	register_class(hInstance);
 
@@ -91,7 +90,7 @@ ATOM register_class(HINSTANCE hInstance) {
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = MAKEINTRESOURCE(IDC_JUMPCUT);
-	wcex.lpszClassName = szWindowClass;
+	wcex.lpszClassName = WINDOW_TITLE_STRING;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
 	return RegisterClassEx(&wcex);
@@ -101,7 +100,7 @@ ATOM register_class(HINSTANCE hInstance) {
 BOOL init_instance(HINSTANCE hInstance, int nCmdShow) {
 	HICON hMainIcon;
 
-	JC_MAIN_WINDOW = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+	JC_MAIN_WINDOW = CreateWindow(WINDOW_TITLE_STRING, APP_TITLE_STRING, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
 	if (!JC_MAIN_WINDOW) return FALSE;
@@ -112,14 +111,14 @@ BOOL init_instance(HINSTANCE hInstance, int nCmdShow) {
 
 	hMainIcon = LoadIcon(hInstance, (LPCTSTR)MAKEINTRESOURCE(IDI_JUMPCUT));
 
-	nidApp.cbSize = sizeof(NOTIFYICONDATA);
-	nidApp.hWnd = (HWND)JC_MAIN_WINDOW;
-	nidApp.uID = IDI_JUMPCUT;
-	nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-	nidApp.hIcon = hMainIcon;
-	nidApp.uCallbackMessage = WM_USER_SHELLICON;
-	LoadString(hInstance, IDS_APPTOOLTIP, nidApp.szTip, MAX_LOADSTRING);
-	Shell_NotifyIcon(NIM_ADD, &nidApp);
+	notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
+	notifyIconData.hWnd = (HWND)JC_MAIN_WINDOW;
+	notifyIconData.uID = IDI_JUMPCUT;
+	notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+	notifyIconData.hIcon = hMainIcon;
+	notifyIconData.uCallbackMessage = WM_USER_SHELLICON;
+	LoadString(hInstance, IDS_APPTOOLTIP, notifyIconData.szTip, MAX_LOADSTRING);
+	Shell_NotifyIcon(NIM_ADD, &notifyIconData);
 
 	return TRUE;
 }
@@ -151,7 +150,7 @@ LRESULT CALLBACK global_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam)
 			}
 		}
 	}
-	return CallNextHookEx(g_hLowLevelKeyHook, nCode, wParam, lParam);
+	return CallNextHookEx(g_lowLevelKeyHook, nCode, wParam, lParam);
 }
 BOOL CALLBACK jc_try_and_paste_to_other_app(HWND hwnd, LPARAM lParam) {
 	//if (hwnd && IsWindowVisible(hwnd)/* && IsWindowEnabled(hwnd)*/) {
@@ -179,6 +178,7 @@ INT_PTR CALLBACK jc_search_handler(HWND hDlg, UINT message, WPARAM wParam, LPARA
 
 		if (JC_SEARCH_DIALOG_LIST != NULL) {
 			for (auto str : JC_CLIPBOARD_HISTORY) {
+				str.resize(min(str.length(), JC_MAX_MENU_LABEL_LENGTH));
 				SendMessage(JC_SEARCH_DIALOG_LIST, LB_ADDSTRING, 0, (LPARAM)jc_charToCWSTR(str.c_str()));
 			}
 		}
@@ -265,7 +265,7 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		if (wmId == JC_MENU_HOTKEY) {
 			POINT lpClickPoint;
 			GetCursorPos(&lpClickPoint);
-			hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, JC_INSTANCE, false);
+			JC_POPUP_HMENU = jc_show_popup_menu(lpClickPoint, hWnd, JC_INSTANCE, false);
 			return TRUE;
 		}
 		else if (wmId == JC_SEARCH_HOTKEY)
@@ -289,11 +289,11 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		break;
 	}
 	case WM_DESTROY:
-		ChangeClipboardChain(hWnd, hwndNextViewer);
+		ChangeClipboardChain(hWnd, g_hwndNextViewer);
 		PostQuitMessage(0);
 		break;
 	case WM_CREATE:
-		hwndNextViewer = SetClipboardViewer(hWnd);
+		g_hwndNextViewer = SetClipboardViewer(hWnd);
 		break;
 	case WM_USER_SHELLICON:
 		switch (LOWORD(lParam))
@@ -302,7 +302,7 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		case WM_RBUTTONDOWN:
 			POINT lpClickPoint;
 			GetCursorPos(&lpClickPoint);
-			hPopMenu = jc_show_popup_menu(lpClickPoint, hWnd, JC_INSTANCE, true);
+			JC_POPUP_HMENU = jc_show_popup_menu(lpClickPoint, hWnd, JC_INSTANCE, true);
 			return TRUE;
 		}
 		break;
@@ -320,7 +320,7 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			break;
 		}
 		case IDM_EXIT:
-			Shell_NotifyIcon(NIM_DELETE, &nidApp);
+			Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
 			DestroyWindow(hWnd);
 			break;
 		default: {
@@ -328,8 +328,8 @@ LRESULT CALLBACK main_event_handler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			if (idx >= 0 && idx < JC_CLIPBOARD_HISTORY.size()) {
 				string item = JC_CLIPBOARD_HISTORY[idx];
 				jc_set_clipboard(item, hWnd);
-				SetForegroundWindow(callingWindowHWND);
-				EnumChildWindows(callingWindowHWND, jc_try_and_paste_to_other_app, NULL);
+				SetForegroundWindow(g_callingWindowHWND);
+				EnumChildWindows(g_callingWindowHWND, jc_try_and_paste_to_other_app, NULL);
 			}
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}

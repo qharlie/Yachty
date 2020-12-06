@@ -1,5 +1,5 @@
 Field,ID,Type (Type),default,en-us
-Description,2,Text,A clipboard history tool with an intuitive interface and global hot key for quick access to your clipboard history.,
+Description,2,Text,Yet Another Clipboard History Tool (Yacht+y) is a clipboard history tool with an intuitive interface and global hot key for quick access to your clipboard history.,
 ReleaseNotes,3,Text,"Fixes the first 40 entries being displayed in history rather than the last 40",
 Title,4,Text,Yachty,
 ShortTitle,5,Text,Yachty,
